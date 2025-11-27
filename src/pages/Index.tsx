@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { EvidenceSelector } from "@/components/EvidenceSelector";
 import { AbilitySelector } from "@/components/AbilitySelector";
 import { GhostCard } from "@/components/GhostCard";
+import { BPMTracker } from "@/components/BPMTracker";
 import { ghostDatabase, evidenceList, abilityList, Evidence, Ability } from "@/data/ghostData";
 import { RotateCcw, Ghost } from "lucide-react";
 import { toast } from "sonner";
@@ -10,6 +11,7 @@ import { toast } from "sonner";
 const Index = () => {
   const [selectedEvidence, setSelectedEvidence] = useState<Evidence[]>([]);
   const [selectedAbilities, setSelectedAbilities] = useState<Ability[]>([]);
+  const [bpm, setBpm] = useState<number | null>(null);
 
   const toggleEvidence = (evidence: Evidence) => {
     setSelectedEvidence((prev) =>
@@ -39,13 +41,18 @@ const Index = () => {
         ghost.abilities.includes(ability)
       );
 
-      return evidenceMatch && abilityMatch;
+      // Check BPM range if BPM is set
+      const bpmMatch = bpm === null || !ghost.bpmRange || 
+        (bpm >= ghost.bpmRange.min && bpm <= ghost.bpmRange.max);
+
+      return evidenceMatch && abilityMatch && bpmMatch;
     });
-  }, [selectedEvidence, selectedAbilities]);
+  }, [selectedEvidence, selectedAbilities, bpm]);
 
   const handleReset = () => {
     setSelectedEvidence([]);
     setSelectedAbilities([]);
+    setBpm(null);
     toast.success("Selectie gereset");
   };
 
@@ -67,12 +74,16 @@ const Index = () => {
 
         {/* Selectors */}
         <div className="grid md:grid-cols-2 gap-6">
-          <div className="bg-card p-6 rounded-lg border border-border">
-            <EvidenceSelector
-              evidenceList={evidenceList}
-              selectedEvidence={selectedEvidence}
-              onToggle={toggleEvidence}
-            />
+          <div className="space-y-6">
+            <div className="bg-card p-6 rounded-lg border border-border">
+              <EvidenceSelector
+                evidenceList={evidenceList}
+                selectedEvidence={selectedEvidence}
+                onToggle={toggleEvidence}
+              />
+            </div>
+            
+            <BPMTracker onBPMChange={setBpm} />
           </div>
 
           <div className="bg-card p-6 rounded-lg border border-border">
@@ -100,7 +111,7 @@ const Index = () => {
             onClick={handleReset}
             variant="outline"
             size="lg"
-            disabled={selectedEvidence.length === 0 && selectedAbilities.length === 0}
+            disabled={selectedEvidence.length === 0 && selectedAbilities.length === 0 && bpm === null}
           >
             <RotateCcw className="w-4 h-4 mr-2" />
             Reset
