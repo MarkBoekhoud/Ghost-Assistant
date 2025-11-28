@@ -4,21 +4,40 @@ import { EvidenceSelector } from "@/components/EvidenceSelector";
 import { AbilitySelector } from "@/components/AbilitySelector";
 import { GhostCard } from "@/components/GhostCard";
 import { BPMTracker } from "@/components/BPMTracker";
-import { ghostDatabase, evidenceList, abilityList, Evidence, Ability } from "@/data/ghostData";
+import { FootstepsTracker } from "@/components/FootstepsTracker";
+import { ghostDatabase, evidenceList, abilityList, Evidence, Ability, EvidenceState } from "@/data/ghostData";
 import { RotateCcw, Ghost } from "lucide-react";
 import { toast } from "sonner";
 
 const Index = () => {
-  const [selectedEvidence, setSelectedEvidence] = useState<Evidence[]>([]);
+  const [evidenceStates, setEvidenceStates] = useState<Record<Evidence, EvidenceState>>(
+    () => Object.fromEntries(evidenceList.map(e => [e, "unknown"])) as Record<Evidence, EvidenceState>
+  );
   const [selectedAbilities, setSelectedAbilities] = useState<Ability[]>([]);
   const [bpm, setBpm] = useState<number | null>(null);
+  const [spm, setSpm] = useState<number | null>(null);
 
-  const toggleEvidence = (evidence: Evidence) => {
-    setSelectedEvidence((prev) =>
-      prev.includes(evidence)
-        ? prev.filter((e) => e !== evidence)
-        : [...prev, evidence]
-    );
+  const cycleEvidenceState = (evidence: Evidence) => {
+    setEvidenceStates((prev) => {
+      const currentState = prev[evidence];
+      let nextState: EvidenceState;
+      
+      switch (currentState) {
+        case "unknown":
+          nextState = "present";
+          break;
+        case "present":
+          nextState = "excluded";
+          break;
+        case "excluded":
+          nextState = "unknown";
+          break;
+        default:
+          nextState = "unknown";
+      }
+      
+      return { ...prev, [evidence]: nextState };
+    });
   };
 
   const toggleAbility = (ability: Ability) => {
@@ -29,32 +48,76 @@ const Index = () => {
     );
   };
 
+  // Calculate possible ghosts based on all filters
   const possibleGhosts = useMemo(() => {
     return ghostDatabase.filter((ghost) => {
-      // Check if all selected evidence is in the ghost's evidence
-      const evidenceMatch = selectedEvidence.every((evidence) =>
+      // Check evidence: present evidence must be in ghost's evidence
+      const presentEvidence = evidenceList.filter(e => evidenceStates[e] === "present");
+      const excludedEvidence = evidenceList.filter(e => evidenceStates[e] === "excluded");
+      
+      // All present evidence must be in ghost's evidence list
+      const presentMatch = presentEvidence.every((evidence) =>
         ghost.evidence.includes(evidence)
       );
+      
+      // Ghost cannot have any excluded evidence
+      const excludedMatch = excludedEvidence.every((evidence) =>
+        !ghost.evidence.includes(evidence)
+      );
 
-      // Check if all selected abilities are in the ghost's abilities
+      // Check abilities
       const abilityMatch = selectedAbilities.every((ability) =>
         ghost.abilities.includes(ability)
       );
 
-      // Check BPM range if BPM is set
+      // Check BPM range
       const bpmMatch = bpm === null || !ghost.bpmRange || 
         (bpm >= ghost.bpmRange.min && bpm <= ghost.bpmRange.max);
 
-      return evidenceMatch && abilityMatch && bpmMatch;
+      // Check SPM range
+      const spmMatch = spm === null || !ghost.spmRange || 
+        (spm >= ghost.spmRange.min && spm <= ghost.spmRange.max);
+
+      return presentMatch && excludedMatch && abilityMatch && bpmMatch && spmMatch;
     });
-  }, [selectedEvidence, selectedAbilities, bpm]);
+  }, [evidenceStates, selectedAbilities, bpm, spm]);
+
+  // Calculate which evidence should be disabled (impossible based on current selections)
+  const disabledEvidence = useMemo(() => {
+    const disabled: Evidence[] = [];
+    
+    evidenceList.forEach((evidence) => {
+      // Skip if already selected or excluded
+      if (evidenceStates[evidence] !== "unknown") return;
+      
+      // Check if any remaining possible ghost could have this evidence
+      const couldHaveEvidence = possibleGhosts.some((ghost) =>
+        ghost.evidence.includes(evidence)
+      );
+      
+      if (!couldHaveEvidence && possibleGhosts.length > 0) {
+        disabled.push(evidence);
+      }
+    });
+    
+    return disabled;
+  }, [possibleGhosts, evidenceStates]);
 
   const handleReset = () => {
-    setSelectedEvidence([]);
+    setEvidenceStates(
+      Object.fromEntries(evidenceList.map(e => [e, "unknown"])) as Record<Evidence, EvidenceState>
+    );
     setSelectedAbilities([]);
     setBpm(null);
+    setSpm(null);
     toast.success("Selectie gereset");
   };
+
+  const hasActiveFilters = 
+    Object.values(evidenceStates).some(s => s !== "unknown") || 
+    selectedAbilities.length > 0 || 
+    bpm !== null || 
+    spm !== null;
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
@@ -78,12 +141,16 @@ const Index = () => {
             <div className="bg-card p-6 rounded-lg border border-border">
               <EvidenceSelector
                 evidenceList={evidenceList}
-                selectedEvidence={selectedEvidence}
-                onToggle={toggleEvidence}
+                evidenceStates={evidenceStates}
+                disabledEvidence={disabledEvidence}
+                onToggle={cycleEvidenceState}
               />
             </div>
             
-            <BPMTracker onBPMChange={setBpm} />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <BPMTracker onBPMChange={setBpm} />
+              <FootstepsTracker onSPMChange={setSpm} />
+            </div>
           </div>
 
           <div className="bg-card p-6 rounded-lg border border-border">
@@ -111,7 +178,7 @@ const Index = () => {
             onClick={handleReset}
             variant="outline"
             size="lg"
-            disabled={selectedEvidence.length === 0 && selectedAbilities.length === 0 && bpm === null}
+            disabled={!hasActiveFilters}
           >
             <RotateCcw className="w-4 h-4 mr-2" />
             Reset
