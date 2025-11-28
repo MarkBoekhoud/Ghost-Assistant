@@ -9,10 +9,12 @@ export type Evidence =
 
 export type Ability = 
   | "Fast"
+  | "Normal"
   | "Slow"
   | "Hunt Early"
   | "Hunt Late"
   | "Visible"
+  | "Invisible"
   | "Shy";
 
 export type EvidenceState = "unknown" | "present" | "excluded";
