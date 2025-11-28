@@ -52,6 +52,15 @@ export default {
         },
         success: "hsl(var(--success))",
         warning: "hsl(var(--warning))",
+        evidence: {
+          emf: "hsl(var(--evidence-emf))",
+          spiritbox: "hsl(var(--evidence-spiritbox))",
+          fingerprints: "hsl(var(--evidence-fingerprints))",
+          orbs: "hsl(var(--evidence-orbs))",
+          writing: "hsl(var(--evidence-writing))",
+          freezing: "hsl(var(--evidence-freezing))",
+          dots: "hsl(var(--evidence-dots))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",

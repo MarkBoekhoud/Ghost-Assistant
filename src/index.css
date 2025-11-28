@@ -42,6 +42,15 @@ All colors MUST be HSL.
     --success: 140 70% 50%;
     --warning: 40 90% 60%;
 
+    /* Evidence colors */
+    --evidence-emf: 35 100% 50%;
+    --evidence-spiritbox: 190 100% 50%;
+    --evidence-fingerprints: 280 70% 60%;
+    --evidence-orbs: 220 30% 70%;
+    --evidence-writing: 45 100% 55%;
+    --evidence-freezing: 200 100% 70%;
+    --evidence-dots: 140 100% 45%;
+
     --sidebar-background: 0 0% 98%;
 
     --sidebar-foreground: 240 5.3% 26.1%;
