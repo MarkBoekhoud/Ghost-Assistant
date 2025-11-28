@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Ghost } from "@/data/ghostData";
 import { Ghost as GhostIcon, ChevronRight } from "lucide-react";
+import { EvidenceBadge } from "./EvidenceBadge";
 
 interface GhostCardProps {
   ghost: Ghost;
@@ -20,8 +21,8 @@ export const GhostCard = ({ ghost }: GhostCardProps) => {
       className="hover:border-primary/50 transition-all animate-fade-in cursor-pointer group"
       onClick={handleClick}
     >
-      <CardHeader>
-        <div className="flex items-center justify-between mb-2">
+      <CardHeader className="pb-2">
+        <div className="flex items-center justify-between mb-1">
           <div className="flex items-center gap-2">
             <GhostIcon className="w-5 h-5 text-primary" />
             <CardTitle className="text-lg">{ghost.name}</CardTitle>
@@ -30,21 +31,19 @@ export const GhostCard = ({ ghost }: GhostCardProps) => {
         </div>
         <CardDescription className="text-sm line-clamp-2">{ghost.description}</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-3">
+      <CardContent className="space-y-2 pt-0">
         <div>
-          <p className="text-xs text-muted-foreground mb-2 font-semibold">Bewijs:</p>
-          <div className="flex flex-wrap gap-1.5">
+          <p className="text-xs text-muted-foreground mb-1.5 font-semibold">Bewijs:</p>
+          <div className="flex flex-wrap gap-1">
             {ghost.evidence.map((evidence) => (
-              <Badge key={evidence} variant="secondary" className="text-xs">
-                {evidence}
-              </Badge>
+              <EvidenceBadge key={evidence} evidence={evidence} />
             ))}
           </div>
         </div>
         {ghost.abilities.length > 0 && (
           <div>
-            <p className="text-xs text-muted-foreground mb-2 font-semibold">Eigenschappen:</p>
-            <div className="flex flex-wrap gap-1.5">
+            <p className="text-xs text-muted-foreground mb-1.5 font-semibold">Eigenschappen:</p>
+            <div className="flex flex-wrap gap-1">
               {ghost.abilities.map((ability) => (
                 <Badge key={ability} variant="outline" className="text-xs border-accent text-accent">
                   {ability}

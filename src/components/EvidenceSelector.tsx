@@ -15,6 +15,16 @@ interface EvidenceSelectorProps {
   onToggle: (evidence: Evidence) => void;
 }
 
+const evidenceColorMap: Record<Evidence, { bg: string; border: string; text: string }> = {
+  "EMF Level 5": { bg: "bg-evidence-emf/20", border: "border-evidence-emf", text: "text-evidence-emf" },
+  "Spirit Box": { bg: "bg-evidence-spiritbox/20", border: "border-evidence-spiritbox", text: "text-evidence-spiritbox" },
+  "Fingerprints": { bg: "bg-evidence-fingerprints/20", border: "border-evidence-fingerprints", text: "text-evidence-fingerprints" },
+  "Ghost Orbs": { bg: "bg-evidence-orbs/20", border: "border-evidence-orbs", text: "text-evidence-orbs" },
+  "Ghost Writing": { bg: "bg-evidence-writing/20", border: "border-evidence-writing", text: "text-evidence-writing" },
+  "Freezing Temps": { bg: "bg-evidence-freezing/20", border: "border-evidence-freezing", text: "text-evidence-freezing" },
+  "DOTS Projector": { bg: "bg-evidence-dots/20", border: "border-evidence-dots", text: "text-evidence-dots" },
+};
+
 export const EvidenceSelector = ({ 
   evidenceList, 
   evidenceStates, 
@@ -24,6 +34,7 @@ export const EvidenceSelector = ({
   const getStateStyles = (evidence: Evidence) => {
     const isDisabled = disabledEvidence.includes(evidence);
     const state = evidenceStates[evidence];
+    const colors = evidenceColorMap[evidence];
 
     if (isDisabled) {
       return "bg-muted/30 border-muted cursor-not-allowed opacity-50";
@@ -31,20 +42,21 @@ export const EvidenceSelector = ({
 
     switch (state) {
       case "present":
-        return "bg-success/20 border-success text-success";
+        return cn(colors.bg, colors.border, colors.text);
       case "excluded":
         return "bg-muted/50 border-muted text-muted-foreground line-through";
       default:
-        return "bg-secondary/50 border-border hover:border-primary/50";
+        return cn("bg-secondary/50 hover:border-opacity-70", colors.border, "border-opacity-30");
     }
   };
 
   const getStateIcon = (evidence: Evidence) => {
     const state = evidenceStates[evidence];
+    const colors = evidenceColorMap[evidence];
     
     switch (state) {
       case "present":
-        return <Check className="w-4 h-4 text-success" />;
+        return <Check className={cn("w-4 h-4", colors.text)} />;
       case "excluded":
         return <X className="w-4 h-4 text-muted-foreground" />;
       default:
