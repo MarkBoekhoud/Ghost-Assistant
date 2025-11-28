@@ -271,7 +271,7 @@ export const ghostDatabase: Ghost[] = [
   },
   {
     name: "The Mimic",
-    evidence: ["Spirit Box", "Fingerprints", "Freezing Temps"],
+    evidence: ["Spirit Box", "Fingerprints", "Freezing Temps", "Ghost Orbs"],
     abilities: ["Fast", "Slow", "Visible", "Shy"],
     description: "Kan gedrag van andere ghosts nabootsen. Geeft altijd Ghost Orbs.",
     bpmRange: { min: 40, max: 120 },
