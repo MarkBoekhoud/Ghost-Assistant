@@ -43,10 +43,12 @@ export const evidenceList: Evidence[] = [
 
 export const abilityList: Ability[] = [
   "Fast",
+  "Normal",
   "Slow",
   "Hunt Early",
   "Hunt Late",
   "Visible",
+  "Invisible",
   "Shy",
 ];
 
@@ -54,7 +56,7 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "Spirit",
     evidence: ["EMF Level 5", "Spirit Box", "Ghost Writing"],
-    abilities: [],
+    abilities: ["Normal"],
     description: "Een veelvoorkomende ghost zonder speciale eigenschappen.",
     bpmRange: { min: 60, max: 80 },
     spmRange: { min: 100, max: 170 },
