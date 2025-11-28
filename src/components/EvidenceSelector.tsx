@@ -110,7 +110,7 @@ export const EvidenceSelector = ({
         })}
       </div>
       <p className="text-xs text-muted-foreground mt-2">
-        Klik 1x = aanwezig (groen) • Klik 2x = uitgesloten (grijs) • Klik 3x = reset
+        Klik 1x = aanwezig • Klik 2x = uitgesloten • Klik 3x = reset
       </p>
     </div>
   );
