@@ -9,10 +9,10 @@ interface SpeedSelectorProps {
 }
 
 const speedOptions: { value: Speed; label: string }[] = [
-  { value: null, label: "Alle" },
-  { value: "slow", label: "Langzaam" },
-  { value: "normal", label: "Normaal" },
-  { value: "fast", label: "Snel" },
+  { value: null, label: "All" },
+  { value: "slow", label: "Slow" },
+  { value: "normal", label: "Normal" },
+  { value: "fast", label: "Fast" },
 ];
 
 export const SpeedSelector = ({ speed, onChange }: SpeedSelectorProps) => {
@@ -20,7 +20,7 @@ export const SpeedSelector = ({ speed, onChange }: SpeedSelectorProps) => {
     <div className="bg-card p-3 rounded-lg border border-border">
       <div className="flex items-center gap-2 mb-2">
         <Gauge className="w-4 h-4 text-accent" />
-        <span className="text-sm font-semibold">Snelheid</span>
+        <span className="text-sm font-semibold">Speed</span>
       </div>
       <div className="flex gap-1 flex-wrap">
         {speedOptions.map((option) => (

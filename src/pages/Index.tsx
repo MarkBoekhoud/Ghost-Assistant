@@ -23,10 +23,8 @@ const Index = () => {
   const [bpm, setBpm] = useState<number | null>(null);
   const [spm, setSpm] = useState<number | null>(null);
 
-  // Get max evidence count based on difficulty
   const maxEvidence = getEvidenceCount(difficulty);
 
-  // Count present evidence
   const presentEvidenceCount = useMemo(() => {
     return evidenceList.filter(e => evidenceStates[e] === "present").length;
   }, [evidenceStates]);
@@ -38,7 +36,6 @@ const Index = () => {
       
       switch (currentState) {
         case "unknown":
-          // Check if we can add more present evidence
           if (presentEvidenceCount >= maxEvidence) {
             nextState = "excluded";
           } else {
@@ -67,7 +64,6 @@ const Index = () => {
     );
   };
 
-  // Map UI speed to ghost data speed
   const mapSpeedToGhostSpeed = (speed: Speed): GhostSpeed | null => {
     switch (speed) {
       case "slow": return "Slow";
@@ -77,7 +73,6 @@ const Index = () => {
     }
   };
 
-  // Map UI visibility to ghost data visibility
   const mapVisibilityToGhostVisibility = (visibility: Visibility): VisibilityType | null => {
     switch (visibility) {
       case "visible": return "Visible";
@@ -87,41 +82,32 @@ const Index = () => {
     }
   };
 
-  // Calculate possible ghosts based on all filters
   const possibleGhosts = useMemo(() => {
     return ghostDatabase.filter((ghost) => {
-      // Check evidence: present evidence must be in ghost's evidence
       const presentEvidence = evidenceList.filter(e => evidenceStates[e] === "present");
       const excludedEvidence = evidenceList.filter(e => evidenceStates[e] === "excluded");
       
-      // All present evidence must be in ghost's evidence list
       const presentMatch = presentEvidence.every((evidence) =>
         ghost.evidence.includes(evidence)
       );
       
-      // Ghost cannot have any excluded evidence
       const excludedMatch = excludedEvidence.every((evidence) =>
         !ghost.evidence.includes(evidence)
       );
 
-      // Check abilities (hunt early/late)
       const abilityMatch = selectedAbilities.every((ability) =>
         ghost.abilities.includes(ability)
       );
 
-      // Check speed
       const ghostSpeed = mapSpeedToGhostSpeed(selectedSpeed);
       const speedMatch = ghostSpeed === null || ghost.speed.includes(ghostSpeed);
 
-      // Check visibility
       const ghostVisibility = mapVisibilityToGhostVisibility(selectedVisibility);
       const visibilityMatch = ghostVisibility === null || ghost.visibility.includes(ghostVisibility);
 
-      // Check BPM range
       const bpmMatch = bpm === null || !ghost.bpmRange || 
         (bpm >= ghost.bpmRange.min && bpm <= ghost.bpmRange.max);
 
-      // Check SPM range
       const spmMatch = spm === null || !ghost.spmRange || 
         (spm >= ghost.spmRange.min && spm <= ghost.spmRange.max);
 
@@ -129,15 +115,12 @@ const Index = () => {
     });
   }, [evidenceStates, selectedAbilities, selectedSpeed, selectedVisibility, bpm, spm]);
 
-  // Calculate which evidence should be disabled (impossible based on current selections)
   const disabledEvidence = useMemo(() => {
     const disabled: Evidence[] = [];
     
     evidenceList.forEach((evidence) => {
-      // Skip if already selected or excluded
       if (evidenceStates[evidence] !== "unknown") return;
       
-      // Check if any remaining possible ghost could have this evidence
       const couldHaveEvidence = possibleGhosts.some((ghost) =>
         ghost.evidence.includes(evidence)
       );
@@ -159,7 +142,7 @@ const Index = () => {
     setSelectedVisibility(null);
     setBpm(null);
     setSpm(null);
-    toast.success("Selectie gereset");
+    toast.success("Selection reset");
   };
 
   const hasActiveFilters = 
@@ -186,7 +169,7 @@ const Index = () => {
             </h1>
           </div>
           <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
-            Filter op bewijs en eigenschappen om de ghost te identificeren
+            Filter by evidence and traits to identify the ghost
           </p>
         </header>
 
@@ -194,11 +177,11 @@ const Index = () => {
         <div className="bg-card p-3 rounded-lg border border-border">
           <DifficultySelector difficulty={difficulty} onChange={setDifficulty} />
           <p className="text-xs text-muted-foreground mt-2">
-            Max {maxEvidence} bewijs • {presentEvidenceCount}/{maxEvidence} geselecteerd
+            Max {maxEvidence} evidence • {presentEvidenceCount}/{maxEvidence} selected
           </p>
         </div>
 
-        {/* Selectors Grid - Optimized for mobile */}
+        {/* Selectors Grid */}
         <div className="grid gap-3 md:gap-4">
           {/* Evidence */}
           <div className="bg-card p-4 rounded-lg border border-border">
@@ -210,7 +193,7 @@ const Index = () => {
             />
           </div>
           
-          {/* Speed & Visibility - Side by side on mobile */}
+          {/* Speed & Visibility */}
           <div className="grid grid-cols-2 gap-2 md:gap-4">
             <SpeedSelector speed={selectedSpeed} onChange={setSelectedSpeed} />
             <VisibilitySelector visibility={selectedVisibility} onChange={setSelectedVisibility} />
@@ -241,7 +224,7 @@ const Index = () => {
             className="w-full shadow-lg"
             size="lg"
           >
-            <span>Bekijk {possibleGhosts.length} ghost{possibleGhosts.length !== 1 ? "s" : ""}</span>
+            <span>View {possibleGhosts.length} ghost{possibleGhosts.length !== 1 ? "s" : ""}</span>
             <ChevronDown className="w-4 h-4 ml-2" />
           </Button>
         </div>
@@ -250,12 +233,12 @@ const Index = () => {
         <div id="ghost-results" className="flex items-center justify-between pt-2">
           <div>
             <h2 className="text-xl md:text-2xl font-semibold text-foreground">
-              Mogelijke Ghosts
+              Possible Ghosts
             </h2>
             <p className="text-muted-foreground text-sm mt-0.5">
               {possibleGhosts.length === ghostDatabase.length
-                ? "Selecteer filters om te filteren"
-                : `${possibleGhosts.length} ghost${possibleGhosts.length !== 1 ? "s" : ""} mogelijk`}
+                ? "Select filters to narrow down"
+                : `${possibleGhosts.length} ghost${possibleGhosts.length !== 1 ? "s" : ""} possible`}
             </p>
           </div>
           <Button
@@ -279,7 +262,7 @@ const Index = () => {
         {possibleGhosts.length === 0 && (
           <div className="text-center py-8">
             <p className="text-muted-foreground">
-              Geen ghosts gevonden met deze combinatie.
+              No ghosts found with this combination.
             </p>
           </div>
         )}

@@ -55,12 +55,12 @@ export const ghostDatabase: Ghost[] = [
     abilities: [],
     speed: ["Normal"],
     visibility: ["Visible"],
-    description: "Een veelvoorkomende ghost zonder speciale eigenschappen.",
+    description: "A common ghost with no special abilities.",
     bpmRange: { min: 60, max: 80 },
     spmRange: { min: 100, max: 170 },
-    tips: ["Gebruik wierook om de ghost te verdrijven", "Effectief bij smudging"],
-    strengths: ["Geen bijzondere krachten"],
-    weaknesses: ["Wierook is extra effectief en voorkomt jagen voor langere tijd"]
+    tips: ["Use incense to repel the ghost", "Effective with smudging"],
+    strengths: ["No special powers"],
+    weaknesses: ["Incense is extra effective and prevents hunting for longer"]
   },
   {
     name: "Wraith",
@@ -68,12 +68,12 @@ export const ghostDatabase: Ghost[] = [
     abilities: [],
     speed: ["Fast"],
     visibility: ["Visible"],
-    description: "Kan door muren heen bewegen en laat geen voetafdrukken achter.",
+    description: "Can move through walls and leaves no footprints.",
     bpmRange: { min: 75, max: 90 },
     spmRange: { min: 100, max: 170 },
-    tips: ["Check zoutsporen - Wraith laat geen voetafdrukken achter in zout", "Kan teleporteren naar spelers"],
-    strengths: ["Laat nooit voetafdrukken achter", "Kan door deuren en muren teleporteren"],
-    weaknesses: ["Wordt beschadigd door zout te raken"]
+    tips: ["Check salt traces - Wraith leaves no footprints in salt", "Can teleport to players"],
+    strengths: ["Never leaves footprints", "Can teleport through doors and walls"],
+    weaknesses: ["Is damaged by touching salt"]
   },
   {
     name: "Phantom",
@@ -81,12 +81,12 @@ export const ghostDatabase: Ghost[] = [
     abilities: [],
     speed: ["Normal"],
     visibility: ["Visible"],
-    description: "Verdwijnt tijdelijk bij het nemen van een foto.",
+    description: "Temporarily disappears when photographed.",
     bpmRange: { min: 65, max: 75 },
     spmRange: { min: 100, max: 170 },
-    tips: ["Maak een foto om de ghost te laten verdwijnen", "Kijken naar Phantom verlaagt sanity sneller"],
-    strengths: ["Kijken naar een Phantom verlaagt sanity aanzienlijk"],
-    weaknesses: ["Foto nemen zorgt dat hij tijdelijk verdwijnt"]
+    tips: ["Take a photo to make the ghost disappear", "Looking at Phantom drains sanity faster"],
+    strengths: ["Looking at a Phantom significantly drains sanity"],
+    weaknesses: ["Taking a photo causes it to temporarily disappear"]
   },
   {
     name: "Poltergeist",
@@ -94,12 +94,12 @@ export const ghostDatabase: Ghost[] = [
     abilities: [],
     speed: ["Fast"],
     visibility: ["Visible"],
-    description: "Gooit veel objecten tegelijk rond.",
+    description: "Throws many objects at once.",
     bpmRange: { min: 80, max: 100 },
     spmRange: { min: 100, max: 170 },
-    tips: ["Let op veel bewegende objecten tegelijk", "Kan meerdere items tegelijk gooien"],
-    strengths: ["Kan veel objecten tegelijk gooien", "Effectiever in kamers met veel items"],
-    weaknesses: ["Bijna ineffectief in lege kamers"]
+    tips: ["Watch for many moving objects at once", "Can throw multiple items simultaneously"],
+    strengths: ["Can throw many objects at once", "More effective in rooms with many items"],
+    weaknesses: ["Almost ineffective in empty rooms"]
   },
   {
     name: "Banshee",
@@ -107,12 +107,12 @@ export const ghostDatabase: Ghost[] = [
     abilities: ["Hunt Early"],
     speed: ["Normal"],
     visibility: ["Visible"],
-    description: "Jaagt op één specifiek persoon tegelijk.",
+    description: "Hunts one specific person at a time.",
     bpmRange: { min: 50, max: 65 },
     spmRange: { min: 100, max: 170 },
-    tips: ["Focust op één doelwit tot die dood is", "Gebruik parabolic mic voor uniek geluid"],
-    strengths: ["Focust alleen op zijn doelwit tijdens een hunt"],
-    weaknesses: ["Kruisbeeld heeft grotere invloedssfeer"]
+    tips: ["Focuses on one target until they die", "Use parabolic mic for unique sound"],
+    strengths: ["Only focuses on its target during a hunt"],
+    weaknesses: ["Crucifix has larger effective range"]
   },
   {
     name: "Jinn",
@@ -120,12 +120,12 @@ export const ghostDatabase: Ghost[] = [
     abilities: [],
     speed: ["Fast"],
     visibility: ["Visible"],
-    description: "Beweegt sneller als slachtoffer ver weg is.",
+    description: "Moves faster when the target is far away.",
     bpmRange: { min: 85, max: 105 },
     spmRange: { min: 100, max: 250 },
-    tips: ["Schakel de zekeringkast uit om hem te vertragen", "Sneller op afstand"],
-    strengths: ["Beweegt sneller als het doelwit ver weg is"],
-    weaknesses: ["Kan zijn vermogen niet gebruiken als stroom uit is"]
+    tips: ["Turn off the fuse box to slow it down", "Faster at distance"],
+    strengths: ["Moves faster when the target is far away"],
+    weaknesses: ["Cannot use its ability when power is off"]
   },
   {
     name: "Mare",
@@ -133,12 +133,12 @@ export const ghostDatabase: Ghost[] = [
     abilities: ["Hunt Early"],
     speed: ["Normal"],
     visibility: ["Visible"],
-    description: "Jaagt vaker in het donker.",
+    description: "Hunts more often in the dark.",
     bpmRange: { min: 70, max: 85 },
     spmRange: { min: 100, max: 170 },
-    tips: ["Houd lichten aan om hunts te voorkomen", "Schakelt vaak lichten uit"],
-    strengths: ["Grotere kans om aan te vallen in het donker"],
-    weaknesses: ["Houd lichten aan om hunts te verminderen"]
+    tips: ["Keep lights on to prevent hunts", "Often turns lights off"],
+    strengths: ["Higher chance to attack in the dark"],
+    weaknesses: ["Keep lights on to reduce hunts"]
   },
   {
     name: "Revenant",
@@ -146,12 +146,12 @@ export const ghostDatabase: Ghost[] = [
     abilities: [],
     speed: ["Fast", "Slow"],
     visibility: ["Visible"],
-    description: "Zeer langzaam tot het een speler ziet, dan extreem snel.",
+    description: "Very slow until it sees a player, then extremely fast.",
     bpmRange: { min: 40, max: 60 },
     spmRange: { min: 50, max: 300 },
-    tips: ["Verstop je als hij je niet kan zien", "Extreem snel als hij je ziet"],
-    strengths: ["Beweegt extreem snel wanneer hij een doelwit jaagt"],
-    weaknesses: ["Beweegt zeer langzaam als hij geen doelwit heeft"]
+    tips: ["Hide if it cannot see you", "Extremely fast when it sees you"],
+    strengths: ["Moves extremely fast when chasing a target"],
+    weaknesses: ["Moves very slowly when it has no target"]
   },
   {
     name: "Shade",
@@ -159,12 +159,12 @@ export const ghostDatabase: Ghost[] = [
     abilities: ["Hunt Late"],
     speed: ["Normal"],
     visibility: ["Shy"],
-    description: "Vermijdt interactie als er meerdere spelers bij zijn.",
+    description: "Avoids interaction when multiple players are nearby.",
     bpmRange: { min: 55, max: 70 },
     spmRange: { min: 100, max: 170 },
-    tips: ["Blijf alleen voor meer activiteit", "Zeer verlegen met meerdere spelers"],
-    strengths: ["Minder actief bij meerdere spelers"],
-    weaknesses: ["Jaagt niet als er meerdere spelers in de buurt zijn"]
+    tips: ["Stay alone for more activity", "Very shy with multiple players"],
+    strengths: ["Less active with multiple players nearby"],
+    weaknesses: ["Will not hunt when multiple players are nearby"]
   },
   {
     name: "Demon",
@@ -172,12 +172,12 @@ export const ghostDatabase: Ghost[] = [
     abilities: ["Hunt Early"],
     speed: ["Normal"],
     visibility: ["Visible"],
-    description: "Jaagt zeer frequent en agressief.",
+    description: "Hunts very frequently and aggressively.",
     bpmRange: { min: 90, max: 110 },
     spmRange: { min: 100, max: 170 },
-    tips: ["Zeer agressief - wees voorbereid op hunts", "Kan jagen bij hogere sanity"],
-    strengths: ["Jaagt vaker dan andere ghosts", "Kan bij hogere sanity al jagen"],
-    weaknesses: ["Ouija board vragen kosten minder sanity"]
+    tips: ["Very aggressive - be prepared for hunts", "Can hunt at higher sanity"],
+    strengths: ["Hunts more often than other ghosts", "Can hunt at higher sanity"],
+    weaknesses: ["Ouija board questions cost less sanity"]
   },
   {
     name: "Yurei",
@@ -185,12 +185,12 @@ export const ghostDatabase: Ghost[] = [
     abilities: [],
     speed: ["Normal"],
     visibility: ["Visible"],
-    description: "Beïnvloedt sanity sterker dan andere ghosts.",
+    description: "Affects sanity more strongly than other ghosts.",
     bpmRange: { min: 65, max: 80 },
     spmRange: { min: 100, max: 170 },
-    tips: ["Smudging in de kamer beperkt beweging", "Verlaagt sanity sneller"],
-    strengths: ["Sterker effect op sanity van spelers"],
-    weaknesses: ["Smudging in zijn kamer beperkt zijn beweging"]
+    tips: ["Smudging in the room limits movement", "Drains sanity faster"],
+    strengths: ["Stronger effect on player sanity"],
+    weaknesses: ["Smudging in its room limits its movement"]
   },
   {
     name: "Oni",
@@ -198,12 +198,12 @@ export const ghostDatabase: Ghost[] = [
     abilities: [],
     speed: ["Fast"],
     visibility: ["Visible"],
-    description: "Zeer actief en zichtbaar wanneer spelers dichtbij zijn.",
+    description: "Very active and visible when players are nearby.",
     bpmRange: { min: 95, max: 115 },
     spmRange: { min: 100, max: 170 },
-    tips: ["Actiever met meer mensen in de kamer", "Vaker zichtbaar tijdens hunts"],
-    strengths: ["Actiever met meer spelers in de buurt", "Gooit objecten met meer kracht"],
-    weaknesses: ["Hogere activiteit maakt identificatie makkelijker"]
+    tips: ["More active with more people in the room", "More visible during hunts"],
+    strengths: ["More active with more players nearby", "Throws objects with more force"],
+    weaknesses: ["Higher activity makes identification easier"]
   },
   {
     name: "Yokai",
@@ -211,12 +211,12 @@ export const ghostDatabase: Ghost[] = [
     abilities: ["Hunt Early"],
     speed: ["Normal"],
     visibility: ["Visible"],
-    description: "Wordt getriggerd door stemmen in de buurt.",
+    description: "Triggered by voices nearby.",
     bpmRange: { min: 75, max: 90 },
     spmRange: { min: 100, max: 170 },
-    tips: ["Wees stil in de buurt van de ghost", "Praten triggert hunts"],
-    strengths: ["Praten in de buurt maakt hem agressiever"],
-    weaknesses: ["Kan alleen spelers horen die dichtbij zijn tijdens hunt"]
+    tips: ["Be quiet near the ghost", "Talking triggers hunts"],
+    strengths: ["Talking nearby makes it more aggressive"],
+    weaknesses: ["Can only hear players who are close during a hunt"]
   },
   {
     name: "Hantu",
@@ -224,12 +224,12 @@ export const ghostDatabase: Ghost[] = [
     abilities: [],
     speed: ["Fast", "Slow"],
     visibility: ["Visible"],
-    description: "Beweegt sneller in koude kamers.",
+    description: "Moves faster in cold rooms.",
     bpmRange: { min: 60, max: 90 },
     spmRange: { min: 100, max: 270 },
-    tips: ["Houd de zekeringkast aan voor warmte", "Let op bevriezende adem"],
-    strengths: ["Beweegt sneller in koudere gebieden"],
-    weaknesses: ["Beweegt langzamer in warmere gebieden"]
+    tips: ["Keep the fuse box on for warmth", "Watch for freezing breath"],
+    strengths: ["Moves faster in colder areas"],
+    weaknesses: ["Moves slower in warmer areas"]
   },
   {
     name: "Goryo",
@@ -237,12 +237,12 @@ export const ghostDatabase: Ghost[] = [
     abilities: [],
     speed: ["Normal"],
     visibility: ["Shy"],
-    description: "DOTS alleen zichtbaar via camera, niet met blote oog.",
+    description: "DOTS only visible via camera, not with the naked eye.",
     bpmRange: { min: 70, max: 85 },
     spmRange: { min: 100, max: 170 },
-    tips: ["DOTS moet via videocamera bekeken worden", "Verlaat de kamer niet vaak"],
-    strengths: ["Alleen zichtbaar via DOTS op camera"],
-    weaknesses: ["Verschijnt zelden ver van zijn favoriete kamer"]
+    tips: ["DOTS must be viewed via video camera", "Rarely leaves its favorite room"],
+    strengths: ["Only visible via DOTS on camera"],
+    weaknesses: ["Rarely appears far from its favorite room"]
   },
   {
     name: "Myling",
@@ -250,12 +250,12 @@ export const ghostDatabase: Ghost[] = [
     abilities: [],
     speed: ["Normal"],
     visibility: ["Visible"],
-    description: "Maakt minder geluid tijdens jagen.",
+    description: "Makes less noise during hunts.",
     bpmRange: { min: 55, max: 75 },
     spmRange: { min: 100, max: 170 },
-    tips: ["Luister naar voetstappen - zeer stil tijdens hunt", "Parabolic mic voor geluiden"],
-    strengths: ["Maakt minder geluid tijdens hunts"],
-    weaknesses: ["Maakt meer geluiden via parabolic mic"]
+    tips: ["Listen for footsteps - very quiet during hunts", "Parabolic mic for sounds"],
+    strengths: ["Makes less noise during hunts"],
+    weaknesses: ["Makes more sounds via parabolic mic"]
   },
   {
     name: "Onryo",
@@ -263,12 +263,12 @@ export const ghostDatabase: Ghost[] = [
     abilities: ["Hunt Early"],
     speed: ["Normal"],
     visibility: ["Visible"],
-    description: "Wordt getriggerd door het doven van vlammen.",
+    description: "Triggered by extinguishing flames.",
     bpmRange: { min: 80, max: 95 },
     spmRange: { min: 100, max: 170 },
-    tips: ["Kaarsen kunnen hunts voorkomen", "Vlammen doven triggert hunts"],
-    strengths: ["Gedoofde vlam kan een hunt triggeren"],
-    weaknesses: ["Vlammen voorkomen dat hij jaagt"]
+    tips: ["Candles can prevent hunts", "Extinguishing flames triggers hunts"],
+    strengths: ["Extinguished flame can trigger a hunt"],
+    weaknesses: ["Flames prevent it from hunting"]
   },
   {
     name: "The Twins",
@@ -276,12 +276,12 @@ export const ghostDatabase: Ghost[] = [
     abilities: [],
     speed: ["Fast", "Slow"],
     visibility: ["Visible"],
-    description: "Kan twee interacties op verschillende plekken doen.",
+    description: "Can perform two interactions in different locations.",
     bpmRange: { min: 50, max: 100 },
     spmRange: { min: 100, max: 190 },
-    tips: ["Let op gelijktijdige interacties op verschillende plekken", "Eén twin is sneller dan de andere"],
-    strengths: ["Kunnen op meerdere locaties tegelijk interacteren"],
-    weaknesses: ["Vaak zullen ze tegelijk interacteren"]
+    tips: ["Watch for simultaneous interactions in different places", "One twin is faster than the other"],
+    strengths: ["Can interact in multiple locations at once"],
+    weaknesses: ["Often interact at the same time"]
   },
   {
     name: "Raiju",
@@ -289,12 +289,12 @@ export const ghostDatabase: Ghost[] = [
     abilities: ["Hunt Early"],
     speed: ["Fast"],
     visibility: ["Visible"],
-    description: "Beweegt sneller bij elektronische apparatuur.",
+    description: "Moves faster near electronic equipment.",
     bpmRange: { min: 100, max: 120 },
     spmRange: { min: 100, max: 250 },
-    tips: ["Schakel elektronica uit tijdens hunts", "Sneller bij actieve apparatuur"],
-    strengths: ["Beweegt sneller bij elektronische apparatuur"],
-    weaknesses: ["Verstoort elektronica vaker waardoor hij makkelijk te vinden is"]
+    tips: ["Turn off electronics during hunts", "Faster near active equipment"],
+    strengths: ["Moves faster near electronic equipment"],
+    weaknesses: ["Disrupts electronics more often making it easier to find"]
   },
   {
     name: "Obake",
@@ -302,12 +302,12 @@ export const ghostDatabase: Ghost[] = [
     abilities: [],
     speed: ["Normal"],
     visibility: ["Visible"],
-    description: "Kan vingerafdrukken met 6 vingers achterlaten.",
+    description: "Can leave 6-finger fingerprints.",
     bpmRange: { min: 65, max: 80 },
     spmRange: { min: 100, max: 170 },
-    tips: ["Let op 6-vinger afdrukken", "Vingerafdrukken verdwijnen sneller"],
-    strengths: ["Kan vorm veranderen waardoor bewijs minder zichtbaar is"],
-    weaknesses: ["Laat soms unieke 6-vinger afdrukken achter"]
+    tips: ["Look for 6-finger prints", "Fingerprints disappear faster"],
+    strengths: ["Can shapeshift making evidence less visible"],
+    weaknesses: ["Sometimes leaves unique 6-finger prints"]
   },
   {
     name: "The Mimic",
@@ -315,12 +315,12 @@ export const ghostDatabase: Ghost[] = [
     abilities: [],
     speed: ["Fast", "Slow", "Normal"],
     visibility: ["Visible", "Invisible", "Shy"],
-    description: "Kan gedrag van andere ghosts nabootsen. Geeft altijd Ghost Orbs.",
+    description: "Can mimic other ghost behaviors. Always gives Ghost Orbs.",
     bpmRange: { min: 40, max: 120 },
     spmRange: { min: 50, max: 300 },
-    tips: ["Ghost Orbs zijn extra bewijs (niet primair)", "Kopieert gedrag van andere ghosts"],
-    strengths: ["Kan het gedrag van elke andere ghost nabootsen"],
-    weaknesses: ["Geeft altijd Ghost Orbs als extra bewijs"]
+    tips: ["Ghost Orbs are extra evidence (not primary)", "Copies behavior of other ghosts"],
+    strengths: ["Can mimic the behavior of any other ghost"],
+    weaknesses: ["Always gives Ghost Orbs as extra evidence"]
   },
   {
     name: "Moroi",
@@ -328,12 +328,12 @@ export const ghostDatabase: Ghost[] = [
     abilities: [],
     speed: ["Fast"],
     visibility: ["Visible"],
-    description: "Wordt sneller naarmate sanity lager wordt.",
+    description: "Gets faster as sanity decreases.",
     bpmRange: { min: 85, max: 105 },
     spmRange: { min: 100, max: 220 },
-    tips: ["Sanity pillen zijn cruciaal", "Spirit Box kan je vervloeken"],
-    strengths: ["Beweegt sneller bij lagere sanity", "Kan spelers vervloeken via Spirit Box"],
-    weaknesses: ["Smudge sticks verblinden hem langer"]
+    tips: ["Sanity pills are crucial", "Spirit Box can curse you"],
+    strengths: ["Moves faster at lower sanity", "Can curse players via Spirit Box"],
+    weaknesses: ["Smudge sticks blind it longer"]
   },
   {
     name: "Deogen",
@@ -341,12 +341,12 @@ export const ghostDatabase: Ghost[] = [
     abilities: [],
     speed: ["Fast", "Slow"],
     visibility: ["Visible"],
-    description: "Weet altijd waar spelers zijn. Snel van ver, langzaam dichtbij.",
+    description: "Always knows where players are. Fast from far, slow up close.",
     bpmRange: { min: 45, max: 75 },
     spmRange: { min: 40, max: 300 },
-    tips: ["Verstop je niet - hij weet waar je bent", "Langzaam als hij dichtbij komt"],
-    strengths: ["Weet altijd waar alle spelers zijn"],
-    weaknesses: ["Beweegt zeer langzaam als hij dichtbij een speler is"]
+    tips: ["Do not hide - it knows where you are", "Slow when it gets close"],
+    strengths: ["Always knows where all players are"],
+    weaknesses: ["Moves very slowly when close to a player"]
   },
   {
     name: "Thaye",
@@ -354,11 +354,11 @@ export const ghostDatabase: Ghost[] = [
     abilities: ["Hunt Early", "Hunt Late"],
     speed: ["Fast", "Slow"],
     visibility: ["Visible"],
-    description: "Veroudert over tijd, wordt langzamer en minder actief.",
+    description: "Ages over time, becoming slower and less active.",
     bpmRange: { min: 50, max: 110 },
     spmRange: { min: 60, max: 200 },
-    tips: ["Meer actief aan het begin", "Ouija board kan leeftijd onthullen"],
-    strengths: ["Zeer actief en snel wanneer hij jong is"],
-    weaknesses: ["Wordt langzamer en minder actief naarmate hij ouder wordt"]
+    tips: ["More active at the beginning", "Ouija board can reveal age"],
+    strengths: ["Very active and fast when young"],
+    weaknesses: ["Becomes slower and less active as it ages"]
   },
 ];

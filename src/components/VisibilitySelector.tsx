@@ -9,10 +9,10 @@ interface VisibilitySelectorProps {
 }
 
 const visibilityOptions: { value: Visibility; label: string }[] = [
-  { value: null, label: "Alle" },
-  { value: "visible", label: "Zichtbaar" },
-  { value: "invisible", label: "Onzichtbaar" },
-  { value: "shy", label: "Verlegen" },
+  { value: null, label: "All" },
+  { value: "visible", label: "Visible" },
+  { value: "invisible", label: "Invisible" },
+  { value: "shy", label: "Shy" },
 ];
 
 export const VisibilitySelector = ({ visibility, onChange }: VisibilitySelectorProps) => {
@@ -20,7 +20,7 @@ export const VisibilitySelector = ({ visibility, onChange }: VisibilitySelectorP
     <div className="bg-card p-3 rounded-lg border border-border">
       <div className="flex items-center gap-2 mb-2">
         <Eye className="w-4 h-4 text-primary" />
-        <span className="text-sm font-semibold">Zichtbaarheid</span>
+        <span className="text-sm font-semibold">Visibility</span>
       </div>
       <div className="flex gap-1 flex-wrap">
         {visibilityOptions.map((option) => (

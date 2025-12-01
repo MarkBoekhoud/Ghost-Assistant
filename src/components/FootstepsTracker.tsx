@@ -19,7 +19,7 @@ export const FootstepsTracker = ({ onSPMChange }: FootstepsTrackerProps) => {
     if (lastClickRef.current === 0) {
       lastClickRef.current = now;
       setClicks([now]);
-      toast.info("Blijf klikken op het ritme van de voetstappen");
+      toast.info("Keep clicking to the rhythm of the footsteps");
       return;
     }
 
@@ -49,7 +49,7 @@ export const FootstepsTracker = ({ onSPMChange }: FootstepsTrackerProps) => {
     setClicks([]);
     lastClickRef.current = 0;
     onSPMChange(null);
-    toast.success("Footsteps tracker gereset");
+    toast.success("Footsteps tracker reset");
   };
 
   return (
@@ -61,7 +61,7 @@ export const FootstepsTracker = ({ onSPMChange }: FootstepsTrackerProps) => {
               <Footprints className="w-5 h-5 text-warning" />
               Footsteps Tracker
             </CardTitle>
-            <CardDescription>Klik op het ritme van de ghost voetstappen</CardDescription>
+            <CardDescription>Click to the rhythm of the ghost footsteps</CardDescription>
           </div>
           {spm && (
             <Button
@@ -87,13 +87,13 @@ export const FootstepsTracker = ({ onSPMChange }: FootstepsTrackerProps) => {
               <span className="text-sm font-normal">SPM</span>
             </span>
           ) : (
-            <span>Klik op het ritme</span>
+            <span>Click to the rhythm</span>
           )}
         </Button>
         
         {clicks.length > 0 && clicks.length < 3 && (
           <p className="text-sm text-muted-foreground text-center">
-            Nog {3 - clicks.length} klik{3 - clicks.length > 1 ? "s" : ""} nodig...
+            {3 - clicks.length} more click{3 - clicks.length > 1 ? "s" : ""} needed...
           </p>
         )}
       </CardContent>
