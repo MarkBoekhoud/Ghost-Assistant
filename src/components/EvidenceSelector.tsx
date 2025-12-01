@@ -66,7 +66,7 @@ export const EvidenceSelector = ({
 
   return (
     <div className="space-y-3">
-      <h2 className="text-xl font-semibold text-foreground mb-4">Bewijs</h2>
+      <h2 className="text-xl font-semibold text-foreground mb-4">Evidence</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {evidenceList.map((evidence) => {
           const isDisabled = disabledEvidence.includes(evidence);
@@ -100,7 +100,7 @@ export const EvidenceSelector = ({
                   {button}
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Niet mogelijk op basis van geselecteerde bewijzen</p>
+                  <p>Not possible based on selected evidence</p>
                 </TooltipContent>
               </Tooltip>
             );
@@ -110,7 +110,7 @@ export const EvidenceSelector = ({
         })}
       </div>
       <p className="text-xs text-muted-foreground mt-2">
-        Klik 1x = aanwezig • Klik 2x = uitgesloten • Klik 3x = reset
+        Click 1x = present • Click 2x = excluded • Click 3x = reset
       </p>
     </div>
   );

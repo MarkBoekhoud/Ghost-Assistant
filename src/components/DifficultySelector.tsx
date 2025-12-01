@@ -17,7 +17,7 @@ const difficultyOptions: { value: Difficulty; label: string; evidenceCount: numb
 export const DifficultySelector = ({ difficulty, onChange }: DifficultySelectorProps) => {
   return (
     <div className="flex items-center gap-2 flex-wrap">
-      <span className="text-sm font-medium text-muted-foreground">Moeilijkheid:</span>
+      <span className="text-sm font-medium text-muted-foreground">Difficulty:</span>
       <div className="flex gap-1 flex-wrap">
         {difficultyOptions.map((option) => (
           <button

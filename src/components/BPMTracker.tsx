@@ -17,17 +17,15 @@ export const BPMTracker = ({ onBPMChange }: BPMTrackerProps) => {
     const now = Date.now();
     
     if (lastClickRef.current === 0) {
-      // First click
       lastClickRef.current = now;
       setClicks([now]);
-      toast.info("Blijf klikken op het ritme van de heartbeat");
+      toast.info("Keep clicking to the rhythm of the heartbeat");
       return;
     }
 
     const newClicks = [...clicks, now];
     setClicks(newClicks);
 
-    // Calculate BPM from last 5 clicks for more accuracy
     if (newClicks.length >= 3) {
       const recentClicks = newClicks.slice(-5);
       const intervals = [];
@@ -51,7 +49,7 @@ export const BPMTracker = ({ onBPMChange }: BPMTrackerProps) => {
     setClicks([]);
     lastClickRef.current = 0;
     onBPMChange(null);
-    toast.success("BPM tracker gereset");
+    toast.success("BPM tracker reset");
   };
 
   return (
@@ -63,7 +61,7 @@ export const BPMTracker = ({ onBPMChange }: BPMTrackerProps) => {
               <Heart className="w-5 h-5 text-destructive" />
               Heartbeat Tracker
             </CardTitle>
-            <CardDescription>Klik op het ritme van de ghost heartbeat</CardDescription>
+            <CardDescription>Click to the rhythm of the ghost heartbeat</CardDescription>
           </div>
           {bpm && (
             <Button
@@ -89,13 +87,13 @@ export const BPMTracker = ({ onBPMChange }: BPMTrackerProps) => {
               <span className="text-sm font-normal">BPM</span>
             </span>
           ) : (
-            <span>Klik op het ritme</span>
+            <span>Click to the rhythm</span>
           )}
         </Button>
         
         {clicks.length > 0 && clicks.length < 3 && (
           <p className="text-sm text-muted-foreground text-center">
-            Nog {3 - clicks.length} klik{3 - clicks.length > 1 ? "s" : ""} nodig...
+            {3 - clicks.length} more click{3 - clicks.length > 1 ? "s" : ""} needed...
           </p>
         )}
       </CardContent>

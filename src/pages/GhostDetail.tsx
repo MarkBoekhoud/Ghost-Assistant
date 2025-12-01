@@ -12,15 +12,15 @@ import {
 } from "@/components/ui/accordion";
 
 const speedLabels: Record<string, string> = {
-  "Fast": "Snel",
-  "Normal": "Normaal",
-  "Slow": "Langzaam"
+  "Fast": "Fast",
+  "Normal": "Normal",
+  "Slow": "Slow"
 };
 
 const visibilityLabels: Record<string, string> = {
-  "Visible": "Zichtbaar",
-  "Invisible": "Onzichtbaar",
-  "Shy": "Verlegen"
+  "Visible": "Visible",
+  "Invisible": "Invisible",
+  "Shy": "Shy"
 };
 
 const GhostDetail = () => {
@@ -37,9 +37,9 @@ const GhostDetail = () => {
         <div className="max-w-4xl mx-auto">
           <Button onClick={() => navigate("/")} variant="outline" size="sm">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Terug
+            Back
           </Button>
-          <p className="text-muted-foreground mt-4">Ghost niet gevonden.</p>
+          <p className="text-muted-foreground mt-4">Ghost not found.</p>
         </div>
       </div>
     );
@@ -70,7 +70,7 @@ const GhostDetail = () => {
           <div className="bg-card rounded-lg border border-border p-3">
             <div className="flex items-center gap-1.5 mb-2">
               <Zap className="w-4 h-4 text-primary" />
-              <span className="text-sm font-semibold">Bewijzen</span>
+              <span className="text-sm font-semibold">Evidence</span>
             </div>
             <div className="flex flex-wrap gap-1">
               {ghost.evidence.map((evidence) => (
@@ -83,18 +83,18 @@ const GhostDetail = () => {
           <div className="bg-card rounded-lg border border-border p-3">
             <div className="flex items-center gap-1.5 mb-2">
               <Shield className="w-4 h-4 text-accent" />
-              <span className="text-sm font-semibold">Hunt Gedrag</span>
+              <span className="text-sm font-semibold">Hunt Behavior</span>
             </div>
             {ghost.abilities.length > 0 ? (
               <div className="flex flex-wrap gap-1">
                 {ghost.abilities.map((ability) => (
                   <Badge key={ability} variant="outline" className="text-xs border-accent text-accent">
-                    {ability === "Hunt Early" ? "Jaagt Vroeg" : ability === "Hunt Late" ? "Jaagt Laat" : ability}
+                    {ability === "Hunt Early" ? "Hunts Early" : ability === "Hunt Late" ? "Hunts Late" : ability}
                   </Badge>
                 ))}
               </div>
             ) : (
-              <p className="text-xs text-muted-foreground">Normaal</p>
+              <p className="text-xs text-muted-foreground">Normal</p>
             )}
           </div>
 
@@ -102,7 +102,7 @@ const GhostDetail = () => {
           <div className="bg-card rounded-lg border border-border p-3">
             <div className="flex items-center gap-1.5 mb-1">
               <Gauge className="w-4 h-4 text-accent" />
-              <span className="text-sm font-semibold">Snelheid</span>
+              <span className="text-sm font-semibold">Speed</span>
             </div>
             <div className="flex flex-wrap gap-1">
               {ghost.speed.map((s) => (
@@ -117,7 +117,7 @@ const GhostDetail = () => {
           <div className="bg-card rounded-lg border border-border p-3">
             <div className="flex items-center gap-1.5 mb-1">
               <Eye className="w-4 h-4 text-primary" />
-              <span className="text-sm font-semibold">Zichtbaarheid</span>
+              <span className="text-sm font-semibold">Visibility</span>
             </div>
             <div className="flex flex-wrap gap-1">
               {ghost.visibility.map((v) => (
@@ -162,7 +162,7 @@ const GhostDetail = () => {
               <AccordionTrigger className="py-3 hover:no-underline">
                 <div className="flex items-center gap-2">
                   <Lightbulb className="w-4 h-4 text-warning" />
-                  <span className="text-sm font-semibold">Identificatie Tips</span>
+                  <span className="text-sm font-semibold">Identification Tips</span>
                 </div>
               </AccordionTrigger>
               <AccordionContent className="pb-3">
@@ -183,7 +183,7 @@ const GhostDetail = () => {
         <div className="grid grid-cols-2 gap-2">
           {ghost.strengths && ghost.strengths.length > 0 && (
             <div className="bg-card rounded-lg border border-destructive/30 p-3">
-              <span className="text-sm font-semibold text-destructive block mb-2">Sterktes</span>
+              <span className="text-sm font-semibold text-destructive block mb-2">Strengths</span>
               <ul className="space-y-1">
                 {ghost.strengths.map((strength, index) => (
                   <li key={index} className="flex items-start gap-1.5 text-xs text-foreground">
@@ -197,7 +197,7 @@ const GhostDetail = () => {
 
           {ghost.weaknesses && ghost.weaknesses.length > 0 && (
             <div className="bg-card rounded-lg border border-success/30 p-3">
-              <span className="text-sm font-semibold text-success block mb-2">Zwaktes</span>
+              <span className="text-sm font-semibold text-success block mb-2">Weaknesses</span>
               <ul className="space-y-1">
                 {ghost.weaknesses.map((weakness, index) => (
                   <li key={index} className="flex items-start gap-1.5 text-xs text-foreground">
