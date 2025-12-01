@@ -8,14 +8,11 @@ export type Evidence =
   | "DOTS Projector";
 
 export type Ability = 
-  | "Fast"
-  | "Normal"
-  | "Slow"
   | "Hunt Early"
-  | "Hunt Late"
-  | "Visible"
-  | "Invisible"
-  | "Shy";
+  | "Hunt Late";
+
+export type Speed = "Fast" | "Normal" | "Slow";
+export type VisibilityType = "Visible" | "Invisible" | "Shy";
 
 export type EvidenceState = "unknown" | "present" | "excluded";
 
@@ -23,6 +20,8 @@ export interface Ghost {
   name: string;
   evidence: Evidence[];
   abilities: Ability[];
+  speed: Speed[];
+  visibility: VisibilityType[];
   description: string;
   bpmRange?: { min: number; max: number };
   spmRange?: { min: number; max: number };
@@ -42,21 +41,20 @@ export const evidenceList: Evidence[] = [
 ];
 
 export const abilityList: Ability[] = [
-  "Fast",
-  "Normal",
-  "Slow",
   "Hunt Early",
   "Hunt Late",
-  "Visible",
-  "Invisible",
-  "Shy",
 ];
+
+export const speedList: Speed[] = ["Slow", "Normal", "Fast"];
+export const visibilityList: VisibilityType[] = ["Visible", "Invisible", "Shy"];
 
 export const ghostDatabase: Ghost[] = [
   {
     name: "Spirit",
     evidence: ["EMF Level 5", "Spirit Box", "Ghost Writing"],
-    abilities: ["Normal"],
+    abilities: [],
+    speed: ["Normal"],
+    visibility: ["Visible"],
     description: "Een veelvoorkomende ghost zonder speciale eigenschappen.",
     bpmRange: { min: 60, max: 80 },
     spmRange: { min: 100, max: 170 },
@@ -67,7 +65,9 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "Wraith",
     evidence: ["EMF Level 5", "Spirit Box", "DOTS Projector"],
-    abilities: ["Fast"],
+    abilities: [],
+    speed: ["Fast"],
+    visibility: ["Visible"],
     description: "Kan door muren heen bewegen en laat geen voetafdrukken achter.",
     bpmRange: { min: 75, max: 90 },
     spmRange: { min: 100, max: 170 },
@@ -78,7 +78,9 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "Phantom",
     evidence: ["Spirit Box", "Fingerprints", "DOTS Projector"],
-    abilities: ["Visible"],
+    abilities: [],
+    speed: ["Normal"],
+    visibility: ["Visible"],
     description: "Verdwijnt tijdelijk bij het nemen van een foto.",
     bpmRange: { min: 65, max: 75 },
     spmRange: { min: 100, max: 170 },
@@ -89,7 +91,9 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "Poltergeist",
     evidence: ["Spirit Box", "Fingerprints", "Ghost Writing"],
-    abilities: ["Fast"],
+    abilities: [],
+    speed: ["Fast"],
+    visibility: ["Visible"],
     description: "Gooit veel objecten tegelijk rond.",
     bpmRange: { min: 80, max: 100 },
     spmRange: { min: 100, max: 170 },
@@ -101,6 +105,8 @@ export const ghostDatabase: Ghost[] = [
     name: "Banshee",
     evidence: ["Fingerprints", "Ghost Orbs", "DOTS Projector"],
     abilities: ["Hunt Early"],
+    speed: ["Normal"],
+    visibility: ["Visible"],
     description: "Jaagt op één specifiek persoon tegelijk.",
     bpmRange: { min: 50, max: 65 },
     spmRange: { min: 100, max: 170 },
@@ -111,7 +117,9 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "Jinn",
     evidence: ["EMF Level 5", "Fingerprints", "Freezing Temps"],
-    abilities: ["Fast"],
+    abilities: [],
+    speed: ["Fast"],
+    visibility: ["Visible"],
     description: "Beweegt sneller als slachtoffer ver weg is.",
     bpmRange: { min: 85, max: 105 },
     spmRange: { min: 100, max: 250 },
@@ -123,6 +131,8 @@ export const ghostDatabase: Ghost[] = [
     name: "Mare",
     evidence: ["Spirit Box", "Ghost Orbs", "Ghost Writing"],
     abilities: ["Hunt Early"],
+    speed: ["Normal"],
+    visibility: ["Visible"],
     description: "Jaagt vaker in het donker.",
     bpmRange: { min: 70, max: 85 },
     spmRange: { min: 100, max: 170 },
@@ -133,7 +143,9 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "Revenant",
     evidence: ["Ghost Orbs", "Ghost Writing", "Freezing Temps"],
-    abilities: ["Fast", "Slow"],
+    abilities: [],
+    speed: ["Fast", "Slow"],
+    visibility: ["Visible"],
     description: "Zeer langzaam tot het een speler ziet, dan extreem snel.",
     bpmRange: { min: 40, max: 60 },
     spmRange: { min: 50, max: 300 },
@@ -144,7 +156,9 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "Shade",
     evidence: ["EMF Level 5", "Ghost Writing", "Freezing Temps"],
-    abilities: ["Shy", "Hunt Late"],
+    abilities: ["Hunt Late"],
+    speed: ["Normal"],
+    visibility: ["Shy"],
     description: "Vermijdt interactie als er meerdere spelers bij zijn.",
     bpmRange: { min: 55, max: 70 },
     spmRange: { min: 100, max: 170 },
@@ -156,6 +170,8 @@ export const ghostDatabase: Ghost[] = [
     name: "Demon",
     evidence: ["Fingerprints", "Ghost Writing", "Freezing Temps"],
     abilities: ["Hunt Early"],
+    speed: ["Normal"],
+    visibility: ["Visible"],
     description: "Jaagt zeer frequent en agressief.",
     bpmRange: { min: 90, max: 110 },
     spmRange: { min: 100, max: 170 },
@@ -167,6 +183,8 @@ export const ghostDatabase: Ghost[] = [
     name: "Yurei",
     evidence: ["Ghost Orbs", "Freezing Temps", "DOTS Projector"],
     abilities: [],
+    speed: ["Normal"],
+    visibility: ["Visible"],
     description: "Beïnvloedt sanity sterker dan andere ghosts.",
     bpmRange: { min: 65, max: 80 },
     spmRange: { min: 100, max: 170 },
@@ -177,7 +195,9 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "Oni",
     evidence: ["EMF Level 5", "Freezing Temps", "DOTS Projector"],
-    abilities: ["Fast", "Visible"],
+    abilities: [],
+    speed: ["Fast"],
+    visibility: ["Visible"],
     description: "Zeer actief en zichtbaar wanneer spelers dichtbij zijn.",
     bpmRange: { min: 95, max: 115 },
     spmRange: { min: 100, max: 170 },
@@ -189,6 +209,8 @@ export const ghostDatabase: Ghost[] = [
     name: "Yokai",
     evidence: ["Spirit Box", "Ghost Orbs", "DOTS Projector"],
     abilities: ["Hunt Early"],
+    speed: ["Normal"],
+    visibility: ["Visible"],
     description: "Wordt getriggerd door stemmen in de buurt.",
     bpmRange: { min: 75, max: 90 },
     spmRange: { min: 100, max: 170 },
@@ -199,7 +221,9 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "Hantu",
     evidence: ["Fingerprints", "Ghost Orbs", "Freezing Temps"],
-    abilities: ["Fast", "Slow"],
+    abilities: [],
+    speed: ["Fast", "Slow"],
+    visibility: ["Visible"],
     description: "Beweegt sneller in koude kamers.",
     bpmRange: { min: 60, max: 90 },
     spmRange: { min: 100, max: 270 },
@@ -210,7 +234,9 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "Goryo",
     evidence: ["EMF Level 5", "Fingerprints", "DOTS Projector"],
-    abilities: ["Shy"],
+    abilities: [],
+    speed: ["Normal"],
+    visibility: ["Shy"],
     description: "DOTS alleen zichtbaar via camera, niet met blote oog.",
     bpmRange: { min: 70, max: 85 },
     spmRange: { min: 100, max: 170 },
@@ -222,6 +248,8 @@ export const ghostDatabase: Ghost[] = [
     name: "Myling",
     evidence: ["EMF Level 5", "Fingerprints", "Ghost Writing"],
     abilities: [],
+    speed: ["Normal"],
+    visibility: ["Visible"],
     description: "Maakt minder geluid tijdens jagen.",
     bpmRange: { min: 55, max: 75 },
     spmRange: { min: 100, max: 170 },
@@ -233,6 +261,8 @@ export const ghostDatabase: Ghost[] = [
     name: "Onryo",
     evidence: ["Spirit Box", "Ghost Orbs", "Freezing Temps"],
     abilities: ["Hunt Early"],
+    speed: ["Normal"],
+    visibility: ["Visible"],
     description: "Wordt getriggerd door het doven van vlammen.",
     bpmRange: { min: 80, max: 95 },
     spmRange: { min: 100, max: 170 },
@@ -243,7 +273,9 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "The Twins",
     evidence: ["EMF Level 5", "Spirit Box", "Freezing Temps"],
-    abilities: ["Fast", "Slow"],
+    abilities: [],
+    speed: ["Fast", "Slow"],
+    visibility: ["Visible"],
     description: "Kan twee interacties op verschillende plekken doen.",
     bpmRange: { min: 50, max: 100 },
     spmRange: { min: 100, max: 190 },
@@ -254,7 +286,9 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "Raiju",
     evidence: ["EMF Level 5", "Ghost Orbs", "DOTS Projector"],
-    abilities: ["Fast", "Hunt Early"],
+    abilities: ["Hunt Early"],
+    speed: ["Fast"],
+    visibility: ["Visible"],
     description: "Beweegt sneller bij elektronische apparatuur.",
     bpmRange: { min: 100, max: 120 },
     spmRange: { min: 100, max: 250 },
@@ -266,6 +300,8 @@ export const ghostDatabase: Ghost[] = [
     name: "Obake",
     evidence: ["EMF Level 5", "Fingerprints", "Ghost Orbs"],
     abilities: [],
+    speed: ["Normal"],
+    visibility: ["Visible"],
     description: "Kan vingerafdrukken met 6 vingers achterlaten.",
     bpmRange: { min: 65, max: 80 },
     spmRange: { min: 100, max: 170 },
@@ -276,7 +312,9 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "The Mimic",
     evidence: ["Spirit Box", "Fingerprints", "Freezing Temps", "Ghost Orbs"],
-    abilities: ["Fast", "Slow", "Visible", "Shy"],
+    abilities: [],
+    speed: ["Fast", "Slow", "Normal"],
+    visibility: ["Visible", "Invisible", "Shy"],
     description: "Kan gedrag van andere ghosts nabootsen. Geeft altijd Ghost Orbs.",
     bpmRange: { min: 40, max: 120 },
     spmRange: { min: 50, max: 300 },
@@ -287,7 +325,9 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "Moroi",
     evidence: ["Spirit Box", "Ghost Writing", "Freezing Temps"],
-    abilities: ["Fast"],
+    abilities: [],
+    speed: ["Fast"],
+    visibility: ["Visible"],
     description: "Wordt sneller naarmate sanity lager wordt.",
     bpmRange: { min: 85, max: 105 },
     spmRange: { min: 100, max: 220 },
@@ -298,7 +338,9 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "Deogen",
     evidence: ["Spirit Box", "Ghost Writing", "DOTS Projector"],
-    abilities: ["Fast", "Slow"],
+    abilities: [],
+    speed: ["Fast", "Slow"],
+    visibility: ["Visible"],
     description: "Weet altijd waar spelers zijn. Snel van ver, langzaam dichtbij.",
     bpmRange: { min: 45, max: 75 },
     spmRange: { min: 40, max: 300 },
@@ -309,7 +351,9 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "Thaye",
     evidence: ["Ghost Orbs", "Ghost Writing", "DOTS Projector"],
-    abilities: ["Fast", "Slow", "Hunt Early", "Hunt Late"],
+    abilities: ["Hunt Early", "Hunt Late"],
+    speed: ["Fast", "Slow"],
+    visibility: ["Visible"],
     description: "Veroudert over tijd, wordt langzamer en minder actief.",
     bpmRange: { min: 50, max: 110 },
     spmRange: { min: 60, max: 200 },

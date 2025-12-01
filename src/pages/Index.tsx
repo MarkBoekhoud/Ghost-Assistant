@@ -5,17 +5,31 @@ import { AbilitySelector } from "@/components/AbilitySelector";
 import { GhostCard } from "@/components/GhostCard";
 import { BPMTracker } from "@/components/BPMTracker";
 import { FootstepsTracker } from "@/components/FootstepsTracker";
-import { ghostDatabase, evidenceList, abilityList, Evidence, Ability, EvidenceState } from "@/data/ghostData";
-import { RotateCcw, Ghost } from "lucide-react";
+import { DifficultySelector, Difficulty, getEvidenceCount } from "@/components/DifficultySelector";
+import { SpeedSelector, Speed } from "@/components/SpeedSelector";
+import { VisibilitySelector, Visibility } from "@/components/VisibilitySelector";
+import { ghostDatabase, evidenceList, abilityList, Evidence, Ability, EvidenceState, Speed as GhostSpeed, VisibilityType } from "@/data/ghostData";
+import { RotateCcw, Ghost, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 
 const Index = () => {
+  const [difficulty, setDifficulty] = useState<Difficulty>("intermediate");
   const [evidenceStates, setEvidenceStates] = useState<Record<Evidence, EvidenceState>>(
     () => Object.fromEntries(evidenceList.map(e => [e, "unknown"])) as Record<Evidence, EvidenceState>
   );
   const [selectedAbilities, setSelectedAbilities] = useState<Ability[]>([]);
+  const [selectedSpeed, setSelectedSpeed] = useState<Speed>(null);
+  const [selectedVisibility, setSelectedVisibility] = useState<Visibility>(null);
   const [bpm, setBpm] = useState<number | null>(null);
   const [spm, setSpm] = useState<number | null>(null);
+
+  // Get max evidence count based on difficulty
+  const maxEvidence = getEvidenceCount(difficulty);
+
+  // Count present evidence
+  const presentEvidenceCount = useMemo(() => {
+    return evidenceList.filter(e => evidenceStates[e] === "present").length;
+  }, [evidenceStates]);
 
   const cycleEvidenceState = (evidence: Evidence) => {
     setEvidenceStates((prev) => {
@@ -24,7 +38,12 @@ const Index = () => {
       
       switch (currentState) {
         case "unknown":
-          nextState = "present";
+          // Check if we can add more present evidence
+          if (presentEvidenceCount >= maxEvidence) {
+            nextState = "excluded";
+          } else {
+            nextState = "present";
+          }
           break;
         case "present":
           nextState = "excluded";
@@ -48,6 +67,26 @@ const Index = () => {
     );
   };
 
+  // Map UI speed to ghost data speed
+  const mapSpeedToGhostSpeed = (speed: Speed): GhostSpeed | null => {
+    switch (speed) {
+      case "slow": return "Slow";
+      case "normal": return "Normal";
+      case "fast": return "Fast";
+      default: return null;
+    }
+  };
+
+  // Map UI visibility to ghost data visibility
+  const mapVisibilityToGhostVisibility = (visibility: Visibility): VisibilityType | null => {
+    switch (visibility) {
+      case "visible": return "Visible";
+      case "invisible": return "Invisible";
+      case "shy": return "Shy";
+      default: return null;
+    }
+  };
+
   // Calculate possible ghosts based on all filters
   const possibleGhosts = useMemo(() => {
     return ghostDatabase.filter((ghost) => {
@@ -65,10 +104,18 @@ const Index = () => {
         !ghost.evidence.includes(evidence)
       );
 
-      // Check abilities
+      // Check abilities (hunt early/late)
       const abilityMatch = selectedAbilities.every((ability) =>
         ghost.abilities.includes(ability)
       );
+
+      // Check speed
+      const ghostSpeed = mapSpeedToGhostSpeed(selectedSpeed);
+      const speedMatch = ghostSpeed === null || ghost.speed.includes(ghostSpeed);
+
+      // Check visibility
+      const ghostVisibility = mapVisibilityToGhostVisibility(selectedVisibility);
+      const visibilityMatch = ghostVisibility === null || ghost.visibility.includes(ghostVisibility);
 
       // Check BPM range
       const bpmMatch = bpm === null || !ghost.bpmRange || 
@@ -78,9 +125,9 @@ const Index = () => {
       const spmMatch = spm === null || !ghost.spmRange || 
         (spm >= ghost.spmRange.min && spm <= ghost.spmRange.max);
 
-      return presentMatch && excludedMatch && abilityMatch && bpmMatch && spmMatch;
+      return presentMatch && excludedMatch && abilityMatch && speedMatch && visibilityMatch && bpmMatch && spmMatch;
     });
-  }, [evidenceStates, selectedAbilities, bpm, spm]);
+  }, [evidenceStates, selectedAbilities, selectedSpeed, selectedVisibility, bpm, spm]);
 
   // Calculate which evidence should be disabled (impossible based on current selections)
   const disabledEvidence = useMemo(() => {
@@ -108,6 +155,8 @@ const Index = () => {
       Object.fromEntries(evidenceList.map(e => [e, "unknown"])) as Record<Evidence, EvidenceState>
     );
     setSelectedAbilities([]);
+    setSelectedSpeed(null);
+    setSelectedVisibility(null);
     setBpm(null);
     setSpm(null);
     toast.success("Selectie gereset");
@@ -116,86 +165,121 @@ const Index = () => {
   const hasActiveFilters = 
     Object.values(evidenceStates).some(s => s !== "unknown") || 
     selectedAbilities.length > 0 || 
+    selectedSpeed !== null ||
+    selectedVisibility !== null ||
     bpm !== null || 
     spm !== null;
 
+  const scrollToGhosts = () => {
+    document.getElementById('ghost-results')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
-    <div className="min-h-screen bg-background p-4 md:p-8">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="min-h-screen bg-background p-3 md:p-6">
+      <div className="max-w-7xl mx-auto space-y-4 md:space-y-6">
         {/* Header */}
-        <header className="text-center space-y-4 py-8">
-          <div className="flex items-center justify-center gap-3">
-            <Ghost className="w-10 h-10 text-primary animate-ghost-glow" />
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground">
+        <header className="text-center space-y-2 py-4 md:py-6">
+          <div className="flex items-center justify-center gap-2">
+            <Ghost className="w-8 h-8 md:w-10 md:h-10 text-primary animate-ghost-glow" />
+            <h1 className="text-2xl md:text-4xl font-bold text-foreground">
               Ghost Assistant
             </h1>
           </div>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Vink bewijs aan en selecteer gedrag om te ontdekken met welke ghost je te maken hebt
+          <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
+            Filter op bewijs en eigenschappen om de ghost te identificeren
           </p>
         </header>
 
-        {/* Selectors */}
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="space-y-6">
-            <div className="bg-card p-6 rounded-lg border border-border">
-              <EvidenceSelector
-                evidenceList={evidenceList}
-                evidenceStates={evidenceStates}
-                disabledEvidence={disabledEvidence}
-                onToggle={cycleEvidenceState}
-              />
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <BPMTracker onBPMChange={setBpm} />
-              <FootstepsTracker onSPMChange={setSpm} />
-            </div>
-          </div>
+        {/* Difficulty Selector */}
+        <div className="bg-card p-3 rounded-lg border border-border">
+          <DifficultySelector difficulty={difficulty} onChange={setDifficulty} />
+          <p className="text-xs text-muted-foreground mt-2">
+            Max {maxEvidence} bewijs • {presentEvidenceCount}/{maxEvidence} geselecteerd
+          </p>
+        </div>
 
-          <div className="bg-card p-6 rounded-lg border border-border">
-            <AbilitySelector
-              abilityList={abilityList}
-              selectedAbilities={selectedAbilities}
-              onToggle={toggleAbility}
+        {/* Selectors Grid - Optimized for mobile */}
+        <div className="grid gap-3 md:gap-4">
+          {/* Evidence */}
+          <div className="bg-card p-4 rounded-lg border border-border">
+            <EvidenceSelector
+              evidenceList={evidenceList}
+              evidenceStates={evidenceStates}
+              disabledEvidence={disabledEvidence}
+              onToggle={cycleEvidenceState}
             />
           </div>
+          
+          {/* Speed & Visibility - Side by side on mobile */}
+          <div className="grid grid-cols-2 gap-2 md:gap-4">
+            <SpeedSelector speed={selectedSpeed} onChange={setSelectedSpeed} />
+            <VisibilitySelector visibility={selectedVisibility} onChange={setSelectedVisibility} />
+          </div>
+
+          {/* BPM & Footsteps Trackers */}
+          <div className="grid grid-cols-2 gap-2 md:gap-4">
+            <BPMTracker onBPMChange={setBpm} />
+            <FootstepsTracker onSPMChange={setSpm} />
+          </div>
+
+          {/* Hunt Behavior */}
+          {abilityList.length > 0 && (
+            <div className="bg-card p-3 rounded-lg border border-border">
+              <AbilitySelector
+                abilityList={abilityList}
+                selectedAbilities={selectedAbilities}
+                onToggle={toggleAbility}
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Mobile Quick Jump Button */}
+        <div className="md:hidden sticky bottom-4 z-10">
+          <Button 
+            onClick={scrollToGhosts}
+            className="w-full shadow-lg"
+            size="lg"
+          >
+            <span>Bekijk {possibleGhosts.length} ghost{possibleGhosts.length !== 1 ? "s" : ""}</span>
+            <ChevronDown className="w-4 h-4 ml-2" />
+          </Button>
         </div>
 
         {/* Results Header */}
-        <div className="flex items-center justify-between">
+        <div id="ghost-results" className="flex items-center justify-between pt-2">
           <div>
-            <h2 className="text-2xl font-semibold text-foreground">
+            <h2 className="text-xl md:text-2xl font-semibold text-foreground">
               Mogelijke Ghosts
             </h2>
-            <p className="text-muted-foreground mt-1">
+            <p className="text-muted-foreground text-sm mt-0.5">
               {possibleGhosts.length === ghostDatabase.length
-                ? "Selecteer bewijs en eigenschappen om te filteren"
+                ? "Selecteer filters om te filteren"
                 : `${possibleGhosts.length} ghost${possibleGhosts.length !== 1 ? "s" : ""} mogelijk`}
             </p>
           </div>
           <Button
             onClick={handleReset}
             variant="outline"
-            size="lg"
+            size="sm"
             disabled={!hasActiveFilters}
           >
-            <RotateCcw className="w-4 h-4 mr-2" />
+            <RotateCcw className="w-4 h-4 mr-1" />
             Reset
           </Button>
         </div>
 
         {/* Ghost Cards */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4">
           {possibleGhosts.map((ghost) => (
             <GhostCard key={ghost.name} ghost={ghost} />
           ))}
         </div>
 
         {possibleGhosts.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground text-lg">
-              Geen ghosts gevonden met deze combinatie. Controleer je selectie.
+          <div className="text-center py-8">
+            <p className="text-muted-foreground">
+              Geen ghosts gevonden met deze combinatie.
             </p>
           </div>
         )}
