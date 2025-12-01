@@ -2,7 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ghostDatabase } from "@/data/ghostData";
-import { ArrowLeft, Ghost, Heart, Footprints, Zap, Shield, Lightbulb } from "lucide-react";
+import { ArrowLeft, Ghost, Heart, Footprints, Zap, Shield, Lightbulb, Gauge, Eye } from "lucide-react";
 import { EvidenceBadge } from "@/components/EvidenceBadge";
 import {
   Accordion,
@@ -10,6 +10,18 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+
+const speedLabels: Record<string, string> = {
+  "Fast": "Snel",
+  "Normal": "Normaal",
+  "Slow": "Langzaam"
+};
+
+const visibilityLabels: Record<string, string> = {
+  "Visible": "Zichtbaar",
+  "Invisible": "Onzichtbaar",
+  "Shy": "Verlegen"
+};
 
 const GhostDetail = () => {
   const { ghostName } = useParams<{ ghostName: string }>();
@@ -67,23 +79,53 @@ const GhostDetail = () => {
             </div>
           </div>
 
-          {/* Abilities */}
+          {/* Hunt Behavior */}
           <div className="bg-card rounded-lg border border-border p-3">
             <div className="flex items-center gap-1.5 mb-2">
               <Shield className="w-4 h-4 text-accent" />
-              <span className="text-sm font-semibold">Eigenschappen</span>
+              <span className="text-sm font-semibold">Hunt Gedrag</span>
             </div>
             {ghost.abilities.length > 0 ? (
               <div className="flex flex-wrap gap-1">
                 {ghost.abilities.map((ability) => (
                   <Badge key={ability} variant="outline" className="text-xs border-accent text-accent">
-                    {ability}
+                    {ability === "Hunt Early" ? "Jaagt Vroeg" : ability === "Hunt Late" ? "Jaagt Laat" : ability}
                   </Badge>
                 ))}
               </div>
             ) : (
-              <p className="text-xs text-muted-foreground">Geen</p>
+              <p className="text-xs text-muted-foreground">Normaal</p>
             )}
+          </div>
+
+          {/* Speed */}
+          <div className="bg-card rounded-lg border border-border p-3">
+            <div className="flex items-center gap-1.5 mb-1">
+              <Gauge className="w-4 h-4 text-accent" />
+              <span className="text-sm font-semibold">Snelheid</span>
+            </div>
+            <div className="flex flex-wrap gap-1">
+              {ghost.speed.map((s) => (
+                <Badge key={s} variant="outline" className="text-xs">
+                  {speedLabels[s] || s}
+                </Badge>
+              ))}
+            </div>
+          </div>
+
+          {/* Visibility */}
+          <div className="bg-card rounded-lg border border-border p-3">
+            <div className="flex items-center gap-1.5 mb-1">
+              <Eye className="w-4 h-4 text-primary" />
+              <span className="text-sm font-semibold">Zichtbaarheid</span>
+            </div>
+            <div className="flex flex-wrap gap-1">
+              {ghost.visibility.map((v) => (
+                <Badge key={v} variant="outline" className="text-xs">
+                  {visibilityLabels[v] || v}
+                </Badge>
+              ))}
+            </div>
           </div>
 
           {/* BPM */}
@@ -113,10 +155,9 @@ const GhostDetail = () => {
           )}
         </div>
 
-        {/* Collapsible Sections */}
-        <Accordion type="multiple" defaultValue={["tips"]} className="space-y-2">
-          {/* Tips */}
-          {ghost.tips && ghost.tips.length > 0 && (
+        {/* Tips - Collapsible */}
+        {ghost.tips && ghost.tips.length > 0 && (
+          <Accordion type="multiple" defaultValue={["tips"]}>
             <AccordionItem value="tips" className="bg-card rounded-lg border border-border px-3">
               <AccordionTrigger className="py-3 hover:no-underline">
                 <div className="flex items-center gap-2">
@@ -135,47 +176,39 @@ const GhostDetail = () => {
                 </ul>
               </AccordionContent>
             </AccordionItem>
+          </Accordion>
+        )}
+
+        {/* Strengths & Weaknesses - Always visible */}
+        <div className="grid grid-cols-2 gap-2">
+          {ghost.strengths && ghost.strengths.length > 0 && (
+            <div className="bg-card rounded-lg border border-destructive/30 p-3">
+              <span className="text-sm font-semibold text-destructive block mb-2">Sterktes</span>
+              <ul className="space-y-1">
+                {ghost.strengths.map((strength, index) => (
+                  <li key={index} className="flex items-start gap-1.5 text-xs text-foreground">
+                    <span className="text-destructive">▲</span>
+                    {strength}
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
 
-          {/* Strengths & Weaknesses combined row */}
-          <div className="grid grid-cols-2 gap-2">
-            {ghost.strengths && ghost.strengths.length > 0 && (
-              <AccordionItem value="strengths" className="bg-card rounded-lg border border-destructive/30 px-3">
-                <AccordionTrigger className="py-3 hover:no-underline">
-                  <span className="text-sm font-semibold text-destructive">Sterktes</span>
-                </AccordionTrigger>
-                <AccordionContent className="pb-3">
-                  <ul className="space-y-1">
-                    {ghost.strengths.map((strength, index) => (
-                      <li key={index} className="flex items-start gap-1.5 text-xs text-foreground">
-                        <span className="text-destructive">▲</span>
-                        {strength}
-                      </li>
-                    ))}
-                  </ul>
-                </AccordionContent>
-              </AccordionItem>
-            )}
-
-            {ghost.weaknesses && ghost.weaknesses.length > 0 && (
-              <AccordionItem value="weaknesses" className="bg-card rounded-lg border border-success/30 px-3">
-                <AccordionTrigger className="py-3 hover:no-underline">
-                  <span className="text-sm font-semibold text-success">Zwaktes</span>
-                </AccordionTrigger>
-                <AccordionContent className="pb-3">
-                  <ul className="space-y-1">
-                    {ghost.weaknesses.map((weakness, index) => (
-                      <li key={index} className="flex items-start gap-1.5 text-xs text-foreground">
-                        <span className="text-success">▼</span>
-                        {weakness}
-                      </li>
-                    ))}
-                  </ul>
-                </AccordionContent>
-              </AccordionItem>
-            )}
-          </div>
-        </Accordion>
+          {ghost.weaknesses && ghost.weaknesses.length > 0 && (
+            <div className="bg-card rounded-lg border border-success/30 p-3">
+              <span className="text-sm font-semibold text-success block mb-2">Zwaktes</span>
+              <ul className="space-y-1">
+                {ghost.weaknesses.map((weakness, index) => (
+                  <li key={index} className="flex items-start gap-1.5 text-xs text-foreground">
+                    <span className="text-success">▼</span>
+                    {weakness}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

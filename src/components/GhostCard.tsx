@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Ghost } from "@/data/ghostData";
 import { Ghost as GhostIcon, ChevronRight } from "lucide-react";
@@ -8,6 +8,12 @@ import { EvidenceBadge } from "./EvidenceBadge";
 interface GhostCardProps {
   ghost: Ghost;
 }
+
+const speedLabels: Record<string, string> = {
+  "Fast": "Snel",
+  "Normal": "Normaal",
+  "Slow": "Langzaam"
+};
 
 export const GhostCard = ({ ghost }: GhostCardProps) => {
   const navigate = useNavigate();
@@ -18,40 +24,31 @@ export const GhostCard = ({ ghost }: GhostCardProps) => {
 
   return (
     <Card 
-      className="hover:border-primary/50 transition-all animate-fade-in cursor-pointer group"
+      className="hover:border-primary/50 transition-all animate-fade-in cursor-pointer group p-2 md:p-3"
       onClick={handleClick}
     >
-      <CardHeader className="pb-2">
-        <div className="flex items-center justify-between mb-1">
-          <div className="flex items-center gap-2">
-            <GhostIcon className="w-5 h-5 text-primary" />
-            <CardTitle className="text-lg">{ghost.name}</CardTitle>
+      <CardHeader className="p-0 pb-1.5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <GhostIcon className="w-4 h-4 text-primary shrink-0" />
+            <CardTitle className="text-sm md:text-base truncate">{ghost.name}</CardTitle>
           </div>
-          <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+          <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
         </div>
-        <CardDescription className="text-sm line-clamp-2">{ghost.description}</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-2 pt-0">
-        <div>
-          <p className="text-xs text-muted-foreground mb-1.5 font-semibold">Bewijs:</p>
-          <div className="flex flex-wrap gap-1">
-            {ghost.evidence.map((evidence) => (
-              <EvidenceBadge key={evidence} evidence={evidence} />
-            ))}
-          </div>
+      <CardContent className="p-0 space-y-1.5">
+        <div className="flex flex-wrap gap-0.5">
+          {ghost.evidence.slice(0, 3).map((evidence) => (
+            <EvidenceBadge key={evidence} evidence={evidence} size="sm" />
+          ))}
         </div>
-        {ghost.abilities.length > 0 && (
-          <div>
-            <p className="text-xs text-muted-foreground mb-1.5 font-semibold">Eigenschappen:</p>
-            <div className="flex flex-wrap gap-1">
-              {ghost.abilities.map((ability) => (
-                <Badge key={ability} variant="outline" className="text-xs border-accent text-accent">
-                  {ability}
-                </Badge>
-              ))}
-            </div>
-          </div>
-        )}
+        <div className="flex flex-wrap gap-1">
+          {ghost.speed.map((s) => (
+            <Badge key={s} variant="outline" className="text-[10px] px-1.5 py-0">
+              {speedLabels[s] || s}
+            </Badge>
+          ))}
+        </div>
       </CardContent>
     </Card>
   );

@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 interface EvidenceBadgeProps {
   evidence: Evidence;
   className?: string;
+  size?: "sm" | "default";
 }
 
 const evidenceStyles: Record<Evidence, string> = {
@@ -17,12 +18,13 @@ const evidenceStyles: Record<Evidence, string> = {
   "DOTS Projector": "bg-evidence-dots/20 text-evidence-dots border-evidence-dots/50",
 };
 
-export const EvidenceBadge = ({ evidence, className }: EvidenceBadgeProps) => {
+export const EvidenceBadge = ({ evidence, className, size = "default" }: EvidenceBadgeProps) => {
   return (
     <Badge 
       variant="outline" 
       className={cn(
-        "text-xs border",
+        "border",
+        size === "sm" ? "text-[10px] px-1.5 py-0" : "text-xs",
         evidenceStyles[evidence],
         className
       )}
