@@ -7,6 +7,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { getEvidenceIcon } from "@/lib/evidenceIcons";
 
 interface EvidenceSelectorProps {
   evidenceList: Evidence[];
@@ -81,14 +82,19 @@ export const EvidenceSelector = ({
                 getStateStyles(evidence)
               )}
             >
-              <Label
-                className={cn(
-                  "text-sm font-medium leading-none cursor-pointer",
-                  isDisabled && "cursor-not-allowed"
-                )}
-              >
-                {evidence}
-              </Label>
+              <div className="flex items-center gap-2">
+                <span className={cn(evidenceColorMap[evidence].text)}>
+                  {getEvidenceIcon(evidence)}
+                </span>
+                <Label
+                  className={cn(
+                    "text-sm font-medium leading-none cursor-pointer",
+                    isDisabled && "cursor-not-allowed"
+                  )}
+                >
+                  {evidence}
+                </Label>
+              </div>
               {getStateIcon(evidence)}
             </button>
           );

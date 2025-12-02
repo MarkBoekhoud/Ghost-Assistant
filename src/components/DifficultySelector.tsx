@@ -1,6 +1,12 @@
-import { cn } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-export type Difficulty = "amateur" | "intermediate" | "professional" | "nightmare";
+export type Difficulty = "amateur" | "intermediate" | "professional" | "nightmare" | "insanity";
 
 interface DifficultySelectorProps {
   difficulty: Difficulty;
@@ -8,32 +14,31 @@ interface DifficultySelectorProps {
 }
 
 const difficultyOptions: { value: Difficulty; label: string; evidenceCount: number }[] = [
-  { value: "amateur", label: "Amateur", evidenceCount: 4 },
+  { value: "amateur", label: "Amateur", evidenceCount: 3 },
   { value: "intermediate", label: "Intermediate", evidenceCount: 3 },
-  { value: "professional", label: "Professional", evidenceCount: 2 },
-  { value: "nightmare", label: "Nightmare", evidenceCount: 1 },
+  { value: "professional", label: "Professional", evidenceCount: 3 },
+  { value: "nightmare", label: "Nightmare", evidenceCount: 2 },
+  { value: "insanity", label: "Insanity", evidenceCount: 1 },
 ];
 
 export const DifficultySelector = ({ difficulty, onChange }: DifficultySelectorProps) => {
+  const currentOption = difficultyOptions.find(o => o.value === difficulty);
+  
   return (
-    <div className="flex items-center gap-2 flex-wrap">
+    <div className="flex items-center gap-3">
       <span className="text-sm font-medium text-muted-foreground">Difficulty:</span>
-      <div className="flex gap-1 flex-wrap">
-        {difficultyOptions.map((option) => (
-          <button
-            key={option.value}
-            onClick={() => onChange(option.value)}
-            className={cn(
-              "px-3 py-1.5 text-xs rounded-full transition-all",
-              difficulty === option.value
-                ? "bg-primary text-primary-foreground"
-                : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-            )}
-          >
-            {option.label} ({option.evidenceCount})
-          </button>
-        ))}
-      </div>
+      <Select value={difficulty} onValueChange={(value) => onChange(value as Difficulty)}>
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Select difficulty" />
+        </SelectTrigger>
+        <SelectContent className="bg-popover border border-border">
+          {difficultyOptions.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label} ({option.evidenceCount} evidence)
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 };
