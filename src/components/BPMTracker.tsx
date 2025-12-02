@@ -60,7 +60,7 @@ export const BPMTracker = ({ onBPMChange }: BPMTrackerProps) => {
             <CardTitle className="text-xl flex items-center gap-2">
               <Heart className="w-5 h-5 text-destructive" />
               Heartbeat Tracker
-            </CardTitle>
+            </CardTitle> 
             <CardDescription>Click to the rhythm of the ghost heartbeat</CardDescription>
           </div>
           {bpm && (
@@ -87,7 +87,7 @@ export const BPMTracker = ({ onBPMChange }: BPMTrackerProps) => {
               <span className="text-sm font-normal">BPM</span>
             </span>
           ) : (
-            <span>Click to the rhythm</span>
+            <span>Click here</span>
           )}
         </Button>
         

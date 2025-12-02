@@ -87,7 +87,7 @@ export const FootstepsTracker = ({ onSPMChange }: FootstepsTrackerProps) => {
               <span className="text-sm font-normal">SPM</span>
             </span>
           ) : (
-            <span>Click to the rhythm</span>
+            <span>Click here</span>
           )}
         </Button>
         
