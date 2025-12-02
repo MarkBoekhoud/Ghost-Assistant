@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Gauge } from "lucide-react";
 
-export type Speed = "slow" | "normal" | "fast" | null;
+export type Speed = "slow" | "normal" | "fast" | "los" | null;
 
 interface SpeedSelectorProps {
   speed: Speed;
@@ -13,6 +13,7 @@ const speedOptions: { value: Speed; label: string }[] = [
   { value: "slow", label: "Slow" },
   { value: "normal", label: "Normal" },
   { value: "fast", label: "Fast" },
+  { value: "los", label: "LOS Speed up" },
 ];
 
 export const SpeedSelector = ({ speed, onChange }: SpeedSelectorProps) => {

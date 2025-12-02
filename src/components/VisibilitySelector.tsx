@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Eye } from "lucide-react";
 
-export type Visibility = "visible" | "invisible" | "shy" | null;
+export type Visibility = "visible" | "invisible" | "normal" | null;
 
 interface VisibilitySelectorProps {
   visibility: Visibility;
@@ -10,9 +10,9 @@ interface VisibilitySelectorProps {
 
 const visibilityOptions: { value: Visibility; label: string }[] = [
   { value: null, label: "All" },
-  { value: "visible", label: "Visible" },
   { value: "invisible", label: "Invisible" },
-  { value: "shy", label: "Shy" },
+  { value: "normal", label: "Normal" },
+  { value: "visible", label: "Visible" },
 ];
 
 export const VisibilitySelector = ({ visibility, onChange }: VisibilitySelectorProps) => {
