@@ -42,13 +42,13 @@ export const GhostCard = ({ ghost }: GhostCardProps) => {
             <EvidenceBadge key={evidence} evidence={evidence} size="sm" />
           ))}
         </div>
-        <div className="flex flex-wrap gap-1">
+        {/* <div className="flex flex-wrap gap-1">
           {ghost.speed.map((s) => (
             <Badge key={s} variant="outline" className="text-[10px] px-1.5 py-0">
               {speedLabels[s] || s}
             </Badge>
           ))}
-        </div>
+        </div> */}
       </CardContent>
     </Card>
   );
