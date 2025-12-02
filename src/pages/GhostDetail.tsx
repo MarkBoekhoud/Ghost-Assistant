@@ -82,51 +82,32 @@ const GhostDetail = () => {
             </div>
           </div>
 
-          {/* Hunt Sanity Thresholds */}
-          <div className="bg-card rounded-lg border border-border p-3">
+          {/* Hunt Sanity */}
+          <div className="bg-card rounded-lg border border-border p-3 col-span-2">
             <div className="flex items-center gap-1.5 mb-2">
               <Brain className="w-4 h-4 text-purple-400" />
               <span className="text-sm font-semibold">Hunt Sanity</span>
             </div>
             {ghost.huntSanity && ghost.huntSanity.length > 0 ? (
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 {ghost.huntSanity.map((sanity, index) => (
-                  <div key={index} className="flex items-center gap-2">
+                  <div key={index} className="flex items-center gap-2 flex-wrap">
                     <Badge variant="outline" className="text-xs border-purple-400/50 text-purple-400 bg-purple-400/10">
-                      {sanity.threshold}%
+                      ≤{sanity.threshold}%
                     </Badge>
-                    {sanity.condition && (
-                      <span className="text-xs text-muted-foreground">{sanity.condition}</span>
-                    )}
+                    <span className="text-xs text-muted-foreground">
+                      {sanity.condition || "standard"}
+                    </span>
                   </div>
                 ))}
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs border-muted text-muted-foreground">
-                  50%
+                <Badge variant="outline" className="text-xs border-purple-400/50 text-purple-400 bg-purple-400/10">
+                  ≤50%
                 </Badge>
                 <span className="text-xs text-muted-foreground">standard</span>
               </div>
-            )}
-          </div>
-
-          {/* Hunt Behavior */}
-          <div className="bg-card rounded-lg border border-border p-3">
-            <div className="flex items-center gap-1.5 mb-2">
-              <Shield className="w-4 h-4 text-accent" />
-              <span className="text-sm font-semibold">Hunt Behavior</span>
-            </div>
-            {ghost.abilities.length > 0 ? (
-              <div className="flex flex-wrap gap-1">
-                {ghost.abilities.map((ability) => (
-                  <Badge key={ability} variant="outline" className="text-xs border-accent text-accent">
-                    {ability === "Hunt Early" ? "Hunts Early" : ability === "Hunt Late" ? "Hunts Late" : ability}
-                  </Badge>
-                ))}
-              </div>
-            ) : (
-              <p className="text-xs text-muted-foreground">Normal</p>
             )}
           </div>
 

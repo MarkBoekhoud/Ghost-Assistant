@@ -77,7 +77,7 @@ const Index = () => {
     switch (visibility) {
       case "visible": return "Visible";
       case "invisible": return "Invisible";
-      case "shy": return "Shy";
+      case "normal": return "Normal";
       default: return null;
     }
   };
@@ -117,10 +117,18 @@ const Index = () => {
 
   const disabledEvidence = useMemo(() => {
     const disabled: Evidence[] = [];
+    const atMaxPresent = presentEvidenceCount >= maxEvidence;
     
     evidenceList.forEach((evidence) => {
       if (evidenceStates[evidence] !== "unknown") return;
       
+      // Disable if at max evidence limit
+      if (atMaxPresent) {
+        disabled.push(evidence);
+        return;
+      }
+      
+      // Disable if no ghost can have this evidence
       const couldHaveEvidence = possibleGhosts.some((ghost) =>
         ghost.evidence.includes(evidence)
       );
@@ -131,7 +139,7 @@ const Index = () => {
     });
     
     return disabled;
-  }, [possibleGhosts, evidenceStates]);
+  }, [possibleGhosts, evidenceStates, presentEvidenceCount, maxEvidence]);
 
   const handleReset = () => {
     setEvidenceStates(
