@@ -21,7 +21,7 @@ const speedLabels: Record<string, string> = {
 const visibilityLabels: Record<string, string> = {
   "Visible": "Visible",
   "Invisible": "Invisible",
-  "Shy": "Shy"
+  "Normal": "Normal"
 };
 
 const GhostDetail = () => {
@@ -70,7 +70,7 @@ const GhostDetail = () => {
         {/* Evidence & Stats Grid */}
         <div className="grid grid-cols-2 gap-2">
           {/* Evidence */}
-          <div className="bg-card rounded-lg border border-border p-3">
+          <div className="bg-card rounded-lg border border-border p-3 col-span-2">
             <div className="flex items-center gap-1.5 mb-2">
               <Zap className="w-4 h-4 text-primary" />
               <span className="text-sm font-semibold">Evidence</span>

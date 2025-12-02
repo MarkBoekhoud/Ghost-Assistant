@@ -78,7 +78,7 @@ export const BPMTracker = ({ onBPMChange }: BPMTrackerProps) => {
         <Button
           onClick={handleClick}
           size="lg"
-          className="w-full h-24 text-2xl font-bold animate-ghost-glow"
+          className="w-full h-24 text-2ms font-bold animate-ghost-glow"
           variant="default"
         >
           {bpm ? (

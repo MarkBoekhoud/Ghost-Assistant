@@ -25,10 +25,10 @@ export const DifficultySelector = ({ difficulty, onChange }: DifficultySelectorP
   const currentOption = difficultyOptions.find(o => o.value === difficulty);
   
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-5">
       <span className="text-sm font-medium text-muted-foreground">Difficulty:</span>
       <Select value={difficulty} onValueChange={(value) => onChange(value as Difficulty)}>
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className="w-[220px]">
           <SelectValue placeholder="Select difficulty" />
         </SelectTrigger>
         <SelectContent className="bg-popover border border-border">

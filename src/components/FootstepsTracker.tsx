@@ -78,7 +78,7 @@ export const FootstepsTracker = ({ onSPMChange }: FootstepsTrackerProps) => {
         <Button
           onClick={handleClick}
           size="lg"
-          className="w-full h-24 text-2xl font-bold bg-warning/20 hover:bg-warning/30 text-warning border border-warning/50"
+          className="w-full h-24 text-2ms font-bold bg-warning/20 hover:bg-warning/30 text-warning border border-warning/50"
           variant="outline"
         >
           {spm ? (
