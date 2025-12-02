@@ -106,7 +106,7 @@ export const EvidenceSelector = ({
                   {button}
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Not possible based on selected evidence</p>
+                  <p>Max evidence reached or not possible</p>
                 </TooltipContent>
               </Tooltip>
             );
