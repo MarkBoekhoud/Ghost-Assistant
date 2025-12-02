@@ -13,7 +13,7 @@ import { RotateCcw, Ghost, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 
 const Index = () => {
-  const [difficulty, setDifficulty] = useState<Difficulty>("intermediate");
+  const [difficulty, setDifficulty] = useState<Difficulty>("amateur");
   const [evidenceStates, setEvidenceStates] = useState<Record<Evidence, EvidenceState>>(
     () => Object.fromEntries(evidenceList.map(e => [e, "unknown"])) as Record<Evidence, EvidenceState>
   );
@@ -175,10 +175,12 @@ const Index = () => {
 
         {/* Difficulty Selector */}
         <div className="bg-card p-3 rounded-lg border border-border">
-          <DifficultySelector difficulty={difficulty} onChange={setDifficulty} />
-          <p className="text-xs text-muted-foreground mt-2">
-            Max {maxEvidence} evidence • {presentEvidenceCount}/{maxEvidence} selected
-          </p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <DifficultySelector difficulty={difficulty} onChange={setDifficulty} />
+            <p className="text-xs text-muted-foreground">
+              {presentEvidenceCount}/{maxEvidence} evidence selected
+            </p>
+          </div>
         </div>
 
         {/* Selectors Grid */}

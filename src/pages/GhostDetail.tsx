@@ -2,8 +2,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ghostDatabase } from "@/data/ghostData";
-import { ArrowLeft, Ghost, Heart, Footprints, Zap, Shield, Lightbulb, Gauge, Eye } from "lucide-react";
+import { ArrowLeft, Ghost, Heart, Footprints, Zap, Shield, Lightbulb, Gauge, Eye, Brain } from "lucide-react";
 import { EvidenceBadge } from "@/components/EvidenceBadge";
+import { SmudgeTimer } from "@/components/SmudgeTimer";
 import {
   Accordion,
   AccordionContent,
@@ -45,6 +46,8 @@ const GhostDetail = () => {
     );
   }
 
+  const showSmudgeTimer = ghost.smudgeTimer !== undefined;
+
   return (
     <div className="min-h-screen bg-background p-3 md:p-6">
       <div className="max-w-4xl mx-auto space-y-3">
@@ -77,6 +80,35 @@ const GhostDetail = () => {
                 <EvidenceBadge key={evidence} evidence={evidence} />
               ))}
             </div>
+          </div>
+
+          {/* Hunt Sanity Thresholds */}
+          <div className="bg-card rounded-lg border border-border p-3">
+            <div className="flex items-center gap-1.5 mb-2">
+              <Brain className="w-4 h-4 text-purple-400" />
+              <span className="text-sm font-semibold">Hunt Sanity</span>
+            </div>
+            {ghost.huntSanity && ghost.huntSanity.length > 0 ? (
+              <div className="space-y-1">
+                {ghost.huntSanity.map((sanity, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <Badge variant="outline" className="text-xs border-purple-400/50 text-purple-400 bg-purple-400/10">
+                      {sanity.threshold}%
+                    </Badge>
+                    {sanity.condition && (
+                      <span className="text-xs text-muted-foreground">{sanity.condition}</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="text-xs border-muted text-muted-foreground">
+                  50%
+                </Badge>
+                <span className="text-xs text-muted-foreground">standard</span>
+              </div>
+            )}
           </div>
 
           {/* Hunt Behavior */}
@@ -154,6 +186,11 @@ const GhostDetail = () => {
             </div>
           )}
         </div>
+
+        {/* Smudge Timer for Spirit and Demon */}
+        {showSmudgeTimer && (
+          <SmudgeTimer ghostName={ghost.name} duration={ghost.smudgeTimer!} />
+        )}
 
         {/* Tips - Collapsible */}
         {ghost.tips && ghost.tips.length > 0 && (
