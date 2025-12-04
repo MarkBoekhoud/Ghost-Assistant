@@ -360,6 +360,7 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "The Mimic",
     evidence: ["Spirit Box", "Fingerprints", "Freezing Temps", "Ghost Orbs"],
+    guaranteedEvidence: ["Ghost Orbs"],
     abilities: [],
     speed: ["Fast", "Slow", "Normal", "LOS Speed up"],
     visibility: ["Invisible", "Normal", "Visible"],
