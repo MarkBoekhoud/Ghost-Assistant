@@ -54,6 +54,7 @@ const Index = () => {
     return mimicMainEvidence.filter(e => evidenceStates[e] === "present");
   }, [evidenceStates]);
 
+  const baseMaxEvidence = getEvidenceCount(difficulty, false);
   const maxEvidence = getEvidenceCount(difficulty, mimicStillPossible);
 
   const cycleEvidenceState = (evidence: Evidence) => {
@@ -110,7 +111,14 @@ const Index = () => {
   };
 
   const possibleGhosts = useMemo(() => {
+    const exceedsBaseLimit = presentEvidenceCount > baseMaxEvidence;
+    
     return ghostDatabase.filter((ghost) => {
+      // If we exceed the base limit, only Mimic can be possible
+      if (exceedsBaseLimit && ghost.name !== "The Mimic") {
+        return false;
+      }
+      
       const presentEvidence = evidenceList.filter(e => evidenceStates[e] === "present");
       const excludedEvidence = evidenceList.filter(e => evidenceStates[e] === "excluded");
       
@@ -140,7 +148,7 @@ const Index = () => {
 
       return presentMatch && excludedMatch && abilityMatch && speedMatch && visibilityMatch && bpmMatch && spmMatch;
     });
-  }, [evidenceStates, selectedAbilities, selectedSpeed, selectedVisibility, bpm, spm]);
+  }, [evidenceStates, selectedAbilities, selectedSpeed, selectedVisibility, bpm, spm, presentEvidenceCount, baseMaxEvidence]);
 
   const disabledEvidence = useMemo(() => {
     const disabled: Evidence[] = [];
