@@ -112,15 +112,14 @@ const Index = () => {
 
   const possibleGhosts = useMemo(() => {
     const exceedsBaseLimit = presentEvidenceCount > baseMaxEvidence;
+    const presentEvidence = evidenceList.filter(e => evidenceStates[e] === "present");
+    const excludedEvidence = evidenceList.filter(e => evidenceStates[e] === "excluded");
     
     return ghostDatabase.filter((ghost) => {
       // If we exceed the base limit, only Mimic can be possible
       if (exceedsBaseLimit && ghost.name !== "The Mimic") {
         return false;
       }
-      
-      const presentEvidence = evidenceList.filter(e => evidenceStates[e] === "present");
-      const excludedEvidence = evidenceList.filter(e => evidenceStates[e] === "excluded");
       
       const presentMatch = presentEvidence.every((evidence) =>
         ghost.evidence.includes(evidence)
@@ -129,6 +128,14 @@ const Index = () => {
       const excludedMatch = excludedEvidence.every((evidence) =>
         !ghost.evidence.includes(evidence)
       );
+
+      // Check guaranteed evidence on reduced evidence difficulties
+      // If we've found all possible evidence for this difficulty and the ghost's
+      // guaranteed evidence is not among them, this ghost is impossible
+      let guaranteedMatch = true;
+      if (ghost.guaranteedEvidence && baseMaxEvidence < 3 && presentEvidenceCount >= baseMaxEvidence) {
+        guaranteedMatch = ghost.guaranteedEvidence.every(ge => presentEvidence.includes(ge));
+      }
 
       const abilityMatch = selectedAbilities.every((ability) =>
         ghost.abilities.includes(ability)
@@ -146,7 +153,7 @@ const Index = () => {
       const spmMatch = spm === null || !ghost.spmRange || 
         (spm >= ghost.spmRange.min && spm <= ghost.spmRange.max);
 
-      return presentMatch && excludedMatch && abilityMatch && speedMatch && visibilityMatch && bpmMatch && spmMatch;
+      return presentMatch && excludedMatch && guaranteedMatch && abilityMatch && speedMatch && visibilityMatch && bpmMatch && spmMatch;
     });
   }, [evidenceStates, selectedAbilities, selectedSpeed, selectedVisibility, bpm, spm, presentEvidenceCount, baseMaxEvidence]);
 
