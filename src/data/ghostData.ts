@@ -24,6 +24,7 @@ export interface HuntSanityCondition {
 export interface Ghost {
   name: string;
   evidence: Evidence[];
+  guaranteedEvidence?: Evidence[]; // Evidence that ALWAYS shows for this ghost
   abilities: Ability[];
   speed: Speed[];
   visibility: VisibilityType[];
@@ -252,6 +253,7 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "Hantu",
     evidence: ["Fingerprints", "Ghost Orbs", "Freezing Temps"],
+    guaranteedEvidence: ["Freezing Temps"],
     abilities: [],
     speed: ["Fast", "Slow"],
     visibility: ["Normal"],
@@ -266,6 +268,7 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "Goryo",
     evidence: ["EMF Level 5", "Fingerprints", "DOTS Projector"],
+    guaranteedEvidence: ["DOTS Projector"],
     abilities: [],
     speed: ["Normal", "LOS Speed up"],
     visibility: ["Normal"],
@@ -342,6 +345,7 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "Obake",
     evidence: ["EMF Level 5", "Fingerprints", "Ghost Orbs"],
+    guaranteedEvidence: ["Fingerprints"],
     abilities: [],
     speed: ["Normal", "LOS Speed up"],
     visibility: ["Normal"],
@@ -370,6 +374,7 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "Moroi",
     evidence: ["Spirit Box", "Ghost Writing", "Freezing Temps"],
+    guaranteedEvidence: ["Spirit Box"],
     abilities: [],
     speed: ["Slow", "Fast", "LOS Speed up"],
     visibility: ["Normal"],
@@ -384,6 +389,7 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "Deogen",
     evidence: ["Spirit Box", "Ghost Writing", "DOTS Projector"],
+    guaranteedEvidence: ["Spirit Box"],
     abilities: [],
     speed: ["Slow", "Fast"],
     visibility: ["Normal"],
