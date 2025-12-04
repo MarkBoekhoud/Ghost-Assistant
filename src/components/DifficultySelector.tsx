@@ -43,7 +43,8 @@ export const DifficultySelector = ({ difficulty, onChange }: DifficultySelectorP
   );
 };
 
-export const getEvidenceCount = (difficulty: Difficulty): number => {
+export const getEvidenceCount = (difficulty: Difficulty, mimicActive: boolean = false): number => {
   const option = difficultyOptions.find((o) => o.value === difficulty);
-  return option?.evidenceCount ?? 3;
+  const baseCount = option?.evidenceCount ?? 3;
+  return baseCount + (mimicActive ? 1 : 0);
 };

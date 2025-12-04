@@ -23,11 +23,38 @@ const Index = () => {
   const [bpm, setBpm] = useState<number | null>(null);
   const [spm, setSpm] = useState<number | null>(null);
 
-  const maxEvidence = getEvidenceCount(difficulty);
-
   const presentEvidenceCount = useMemo(() => {
     return evidenceList.filter(e => evidenceStates[e] === "present").length;
   }, [evidenceStates]);
+
+  // Check if Mimic is still possible based on current evidence
+  const mimicStillPossible = useMemo(() => {
+    const presentEvidence = evidenceList.filter(e => evidenceStates[e] === "present");
+    const excludedEvidence = evidenceList.filter(e => evidenceStates[e] === "excluded");
+    const mimic = ghostDatabase.find(g => g.name === "The Mimic");
+    
+    if (!mimic) return false;
+    
+    // Mimic's main evidence + Ghost Orbs
+    const mimicMainEvidence: Evidence[] = ["Freezing Temps", "Spirit Box", "Fingerprints"];
+    const mimicAllEvidence: Evidence[] = [...mimicMainEvidence, "Ghost Orbs"];
+    
+    // Check if any present evidence is NOT in Mimic's possible evidence
+    const presentMatch = presentEvidence.every(e => mimicAllEvidence.includes(e));
+    
+    // Check if any of Mimic's required evidence is excluded
+    const excludedMatch = !excludedEvidence.some(e => mimicAllEvidence.includes(e));
+    
+    return presentMatch && excludedMatch;
+  }, [evidenceStates]);
+
+  // Check if any Mimic main evidence is selected
+  const selectedMimicMainEvidence = useMemo(() => {
+    const mimicMainEvidence: Evidence[] = ["Freezing Temps", "Spirit Box", "Fingerprints"];
+    return mimicMainEvidence.filter(e => evidenceStates[e] === "present");
+  }, [evidenceStates]);
+
+  const maxEvidence = getEvidenceCount(difficulty, mimicStillPossible);
 
   const cycleEvidenceState = (evidence: Evidence) => {
     setEvidenceStates((prev) => {
@@ -119,27 +146,37 @@ const Index = () => {
     const disabled: Evidence[] = [];
     const atMaxPresent = presentEvidenceCount >= maxEvidence;
     
+    const mimicMainEvidence: Evidence[] = ["Freezing Temps", "Spirit Box", "Fingerprints"];
+    const mimicProtectedEvidence: Evidence[] = mimicStillPossible
+      ? selectedMimicMainEvidence.length > 0
+        ? [...selectedMimicMainEvidence, "Ghost Orbs"] // Only protect selected + Ghost Orbs
+        : [...mimicMainEvidence, "Ghost Orbs"] // Protect all Mimic evidence
+      : [];
+    
     evidenceList.forEach((evidence) => {
       if (evidenceStates[evidence] !== "unknown") return;
       
-      // Disable if at max evidence limit
-      if (atMaxPresent) {
+      // Never disable Mimic-protected evidence while Mimic is possible
+      const isProtectedByMimic = mimicProtectedEvidence.includes(evidence);
+      
+      // Disable if at max evidence limit (unless protected by Mimic)
+      if (atMaxPresent && !isProtectedByMimic) {
         disabled.push(evidence);
         return;
       }
       
-      // Disable if no ghost can have this evidence
+      // Disable if no ghost can have this evidence (unless protected by Mimic)
       const couldHaveEvidence = possibleGhosts.some((ghost) =>
         ghost.evidence.includes(evidence)
       );
       
-      if (!couldHaveEvidence && possibleGhosts.length > 0) {
+      if (!couldHaveEvidence && possibleGhosts.length > 0 && !isProtectedByMimic) {
         disabled.push(evidence);
       }
     });
     
     return disabled;
-  }, [possibleGhosts, evidenceStates, presentEvidenceCount, maxEvidence]);
+  }, [possibleGhosts, evidenceStates, presentEvidenceCount, maxEvidence, mimicStillPossible, selectedMimicMainEvidence]);
 
   const handleReset = () => {
     setEvidenceStates(
