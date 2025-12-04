@@ -152,7 +152,8 @@ const Index = () => {
 
   const disabledEvidence = useMemo(() => {
     const disabled: Evidence[] = [];
-    const atMaxPresent = presentEvidenceCount >= maxEvidence;
+    const atBaseMax = presentEvidenceCount >= baseMaxEvidence;
+    const atMimicMax = presentEvidenceCount >= maxEvidence;
     
     const mimicMainEvidence: Evidence[] = ["Freezing Temps", "Spirit Box", "Fingerprints"];
     const mimicProtectedEvidence: Evidence[] = mimicStillPossible
@@ -164,22 +165,28 @@ const Index = () => {
     evidenceList.forEach((evidence) => {
       if (evidenceStates[evidence] !== "unknown") return;
       
-      // Never disable Mimic-protected evidence while Mimic is possible
       const isProtectedByMimic = mimicProtectedEvidence.includes(evidence);
       
-      // Disable if at max evidence limit (unless protected by Mimic)
-      if (atMaxPresent && !isProtectedByMimic) {
-        disabled.push(evidence);
-        return;
-      }
-      
-      // Disable if no ghost can have this evidence (unless protected by Mimic)
-      const couldHaveEvidence = possibleGhosts.some((ghost) =>
-        ghost.evidence.includes(evidence)
-      );
-      
-      if (!couldHaveEvidence && possibleGhosts.length > 0 && !isProtectedByMimic) {
-        disabled.push(evidence);
+      // Non-Mimic evidence: disable at base limit
+      // Mimic-protected evidence: disable at mimic limit (base + 1)
+      if (isProtectedByMimic) {
+        if (atMimicMax) {
+          disabled.push(evidence);
+        }
+      } else {
+        if (atBaseMax) {
+          disabled.push(evidence);
+          return;
+        }
+        
+        // Also disable if no ghost can have this evidence
+        const couldHaveEvidence = possibleGhosts.some((ghost) =>
+          ghost.evidence.includes(evidence)
+        );
+        
+        if (!couldHaveEvidence && possibleGhosts.length > 0) {
+          disabled.push(evidence);
+        }
       }
     });
     
