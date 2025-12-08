@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useMemo, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { EvidenceSelector } from "@/components/EvidenceSelector";
 import { AbilitySelector } from "@/components/AbilitySelector";
@@ -10,26 +10,31 @@ import { DifficultySelector, Difficulty, getEvidenceCount } from "@/components/D
 import { SpeedSelector, Speed } from "@/components/SpeedSelector";
 import { VisibilitySelector, Visibility } from "@/components/VisibilitySelector";
 import { ghostDatabase, evidenceList, abilityList, Evidence, Ability, EvidenceState, Speed as GhostSpeed, VisibilityType } from "@/data/ghostData";
-import { RotateCcw, Ghost, ChevronDown, Users } from "lucide-react";
+import { RotateCcw, Ghost, ChevronDown, ArrowLeft, Users, Copy, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useRoom } from "@/hooks/useRoom";
 
-const Index = () => {
+const Room = () => {
+  const { roomCode } = useParams<{ roomCode: string }>();
   const navigate = useNavigate();
-  const [difficulty, setDifficulty] = useState<Difficulty>("amateur");
-  const [evidenceStates, setEvidenceStates] = useState<Record<Evidence, EvidenceState>>(
-    () => Object.fromEntries(evidenceList.map(e => [e, "unknown"])) as Record<Evidence, EvidenceState>
-  );
+  const { room, loading, error, updateEvidence, updateDifficulty, resetEvidence } = useRoom(roomCode);
+
+  // Local state for non-synced features
   const [selectedAbilities, setSelectedAbilities] = useState<Ability[]>([]);
   const [selectedSpeed, setSelectedSpeed] = useState<Speed>(null);
   const [selectedVisibility, setSelectedVisibility] = useState<Visibility>(null);
   const [bpm, setBpm] = useState<number | null>(null);
   const [spm, setSpm] = useState<number | null>(null);
 
+  // Get synced state from room
+  const difficulty = room?.difficulty || "amateur";
+  const evidenceStates = room?.evidence || 
+    (Object.fromEntries(evidenceList.map(e => [e, "unknown"])) as Record<Evidence, EvidenceState>);
+
   const presentEvidenceCount = useMemo(() => {
     return evidenceList.filter(e => evidenceStates[e] === "present").length;
   }, [evidenceStates]);
 
-  // Check if Mimic is still possible based on current evidence
   const mimicStillPossible = useMemo(() => {
     const presentEvidence = evidenceList.filter(e => evidenceStates[e] === "present");
     const excludedEvidence = evidenceList.filter(e => evidenceStates[e] === "excluded");
@@ -37,20 +42,15 @@ const Index = () => {
     
     if (!mimic) return false;
     
-    // Mimic's main evidence + Ghost Orbs
     const mimicMainEvidence: Evidence[] = ["Freezing Temps", "Spirit Box", "Fingerprints"];
     const mimicAllEvidence: Evidence[] = [...mimicMainEvidence, "Ghost Orbs"];
     
-    // Check if any present evidence is NOT in Mimic's possible evidence
     const presentMatch = presentEvidence.every(e => mimicAllEvidence.includes(e));
-    
-    // Check if any of Mimic's required evidence is excluded
     const excludedMatch = !excludedEvidence.some(e => mimicAllEvidence.includes(e));
     
     return presentMatch && excludedMatch;
   }, [evidenceStates]);
 
-  // Check if any Mimic main evidence is selected
   const selectedMimicMainEvidence = useMemo(() => {
     const mimicMainEvidence: Evidence[] = ["Freezing Temps", "Spirit Box", "Fingerprints"];
     return mimicMainEvidence.filter(e => evidenceStates[e] === "present");
@@ -60,30 +60,33 @@ const Index = () => {
   const maxEvidence = getEvidenceCount(difficulty, mimicStillPossible);
 
   const cycleEvidenceState = (evidence: Evidence) => {
-    setEvidenceStates((prev) => {
-      const currentState = prev[evidence];
-      let nextState: EvidenceState;
-      
-      switch (currentState) {
-        case "unknown":
-          if (presentEvidenceCount >= maxEvidence) {
-            nextState = "excluded";
-          } else {
-            nextState = "present";
-          }
-          break;
-        case "present":
+    const currentState = evidenceStates[evidence];
+    let nextState: EvidenceState;
+    
+    switch (currentState) {
+      case "unknown":
+        if (presentEvidenceCount >= maxEvidence) {
           nextState = "excluded";
-          break;
-        case "excluded":
-          nextState = "unknown";
-          break;
-        default:
-          nextState = "unknown";
-      }
-      
-      return { ...prev, [evidence]: nextState };
-    });
+        } else {
+          nextState = "present";
+        }
+        break;
+      case "present":
+        nextState = "excluded";
+        break;
+      case "excluded":
+        nextState = "unknown";
+        break;
+      default:
+        nextState = "unknown";
+    }
+    
+    const newEvidence = { ...evidenceStates, [evidence]: nextState };
+    updateEvidence(newEvidence);
+  };
+
+  const handleDifficultyChange = (newDifficulty: Difficulty) => {
+    updateDifficulty(newDifficulty);
   };
 
   const toggleAbility = (ability: Ability) => {
@@ -118,7 +121,6 @@ const Index = () => {
     const excludedEvidence = evidenceList.filter(e => evidenceStates[e] === "excluded");
     
     return ghostDatabase.filter((ghost) => {
-      // If we exceed the base limit, only Mimic can be possible
       if (exceedsBaseLimit && ghost.name !== "The Mimic") {
         return false;
       }
@@ -131,9 +133,6 @@ const Index = () => {
         !ghost.evidence.includes(evidence)
       );
 
-      // Check guaranteed evidence on reduced evidence difficulties
-      // If we've found all possible evidence for this difficulty and the ghost's
-      // guaranteed evidence is not among them, this ghost is impossible
       let guaranteedMatch = true;
       if (ghost.guaranteedEvidence && baseMaxEvidence < 3 && presentEvidenceCount >= baseMaxEvidence) {
         guaranteedMatch = ghost.guaranteedEvidence.every(ge => presentEvidence.includes(ge));
@@ -167,8 +166,8 @@ const Index = () => {
     const mimicMainEvidence: Evidence[] = ["Freezing Temps", "Spirit Box", "Fingerprints"];
     const mimicProtectedEvidence: Evidence[] = mimicStillPossible
       ? selectedMimicMainEvidence.length > 0
-        ? [...selectedMimicMainEvidence, "Ghost Orbs"] // Only protect selected + Ghost Orbs
-        : [...mimicMainEvidence, "Ghost Orbs"] // Protect all Mimic evidence
+        ? [...selectedMimicMainEvidence, "Ghost Orbs"]
+        : [...mimicMainEvidence, "Ghost Orbs"]
       : [];
     
     evidenceList.forEach((evidence) => {
@@ -176,8 +175,6 @@ const Index = () => {
       
       const isProtectedByMimic = mimicProtectedEvidence.includes(evidence);
       
-      // Non-Mimic evidence: disable at base limit
-      // Mimic-protected evidence: disable at mimic limit (base + 1)
       if (isProtectedByMimic) {
         if (atMimicMax) {
           disabled.push(evidence);
@@ -188,7 +185,6 @@ const Index = () => {
           return;
         }
         
-        // Also disable if no ghost can have this evidence
         const couldHaveEvidence = possibleGhosts.some((ghost) =>
           ghost.evidence.includes(evidence)
         );
@@ -200,18 +196,22 @@ const Index = () => {
     });
     
     return disabled;
-  }, [possibleGhosts, evidenceStates, presentEvidenceCount, maxEvidence, mimicStillPossible, selectedMimicMainEvidence]);
+  }, [possibleGhosts, evidenceStates, presentEvidenceCount, maxEvidence, mimicStillPossible, selectedMimicMainEvidence, baseMaxEvidence]);
 
   const handleReset = () => {
-    setEvidenceStates(
-      Object.fromEntries(evidenceList.map(e => [e, "unknown"])) as Record<Evidence, EvidenceState>
-    );
+    resetEvidence();
     setSelectedAbilities([]);
     setSelectedSpeed(null);
     setSelectedVisibility(null);
     setBpm(null);
     setSpm(null);
-    toast.success("Selection reset");
+  };
+
+  const handleCopyCode = () => {
+    if (roomCode) {
+      navigator.clipboard.writeText(roomCode);
+      toast.success("Room code copied!");
+    }
   };
 
   const hasActiveFilters = 
@@ -226,35 +226,66 @@ const Index = () => {
     document.getElementById('ghost-results')?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (error || !room) {
+    return (
+      <div className="min-h-screen bg-background p-6 flex flex-col items-center justify-center gap-4">
+        <p className="text-destructive text-lg">{error || "Room not found"}</p>
+        <Button onClick={() => navigate("/multiplayer")}>
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back to Lobby
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background p-3 md:p-6">
       <div className="max-w-7xl mx-auto space-y-4 md:space-y-6">
+        {/* Room Header */}
+        <div className="flex items-center justify-between">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate("/multiplayer")}
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Leave
+          </Button>
+          <div 
+            className="flex items-center gap-2 bg-card px-3 py-1.5 rounded-lg border border-border cursor-pointer hover:bg-secondary transition-colors"
+            onClick={handleCopyCode}
+          >
+            <Users className="w-4 h-4 text-primary" />
+            <span className="font-mono font-bold text-foreground">{roomCode}</span>
+            <Copy className="w-3 h-3 text-muted-foreground" />
+          </div>
+        </div>
+
         {/* Header */}
-        <header className="text-center space-y-2 py-4 md:py-6">
+        <header className="text-center space-y-2 py-2 md:py-4">
           <div className="flex items-center justify-center gap-2">
             <Ghost className="w-8 h-8 md:w-10 md:h-10 text-primary animate-ghost-glow" />
             <h1 className="text-2xl md:text-4xl font-bold text-foreground">
               Ghost Assistant
             </h1>
           </div>
-          <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
-            Filter by evidence and traits to identify the ghost
+          <p className="text-muted-foreground text-sm md:text-base">
+            <span className="text-primary">Multiplayer</span> - Evidence syncs in real-time
           </p>
-          <Button
-            onClick={() => navigate("/multiplayer")}
-            variant="outline"
-            size="sm"
-            className="mt-2"
-          >
-            <Users className="w-4 h-4 mr-2" />
-            Multiplayer
-          </Button>
         </header>
 
         {/* Difficulty Selector */}
         <div className="bg-card p-3 rounded-lg border border-border">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-            <DifficultySelector difficulty={difficulty} onChange={setDifficulty} />
+            <DifficultySelector difficulty={difficulty} onChange={handleDifficultyChange} />
             <p className="text-xs text-muted-foreground">
               {presentEvidenceCount}/{maxEvidence} evidence selected
             </p>
@@ -351,4 +382,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default Room;
