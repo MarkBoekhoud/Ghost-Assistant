@@ -21,6 +21,7 @@ const Room = () => {
 
   // Local state for non-synced features
   const [selectedAbilities, setSelectedAbilities] = useState<Ability[]>([]);
+  const [isLeaving, setIsLeaving] = useState(false);
   const [selectedSpeed, setSelectedSpeed] = useState<Speed>(null);
   const [selectedVisibility, setSelectedVisibility] = useState<Visibility>(null);
   const [bpm, setBpm] = useState<number | null>(null);
@@ -212,11 +213,26 @@ const Room = () => {
   };
 
   const handleLeaveRoom = async () => {
-    if (roomCode) {
-      await deleteRoom(roomCode);
-      toast.success("Room deleted");
+    if (!roomCode) {
+      navigate("/multiplayer");
+      return;
     }
-    navigate("/multiplayer");
+    
+    setIsLeaving(true);
+    try {
+      const deleted = await deleteRoom(roomCode);
+      if (deleted) {
+        toast.success("Room deleted");
+      } else {
+        toast.error("Failed to delete room");
+      }
+    } catch (err) {
+      console.error("Error deleting room:", err);
+      toast.error("Error leaving room");
+    } finally {
+      navigate("/multiplayer");
+      setIsLeaving(false);
+    }
   };
 
   const handleCopyCode = () => {
@@ -267,9 +283,19 @@ const Room = () => {
             variant="ghost"
             size="sm"
             onClick={handleLeaveRoom}
+            disabled={isLeaving}
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Leave
+            {isLeaving ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Leaving...
+              </>
+            ) : (
+              <>
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Leave
+              </>
+            )}
           </Button>
           <div 
             className="flex items-center gap-2 bg-card px-3 py-1.5 rounded-lg border border-border cursor-pointer hover:bg-secondary transition-colors"
