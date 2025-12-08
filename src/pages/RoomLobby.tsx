@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRoom } from "@/hooks/useRoom";
-import { Ghost, Users, ArrowLeft, Loader2 } from "lucide-react";
+import { Ghost, Users, ArrowLeft, Loader2, Clipboard } from "lucide-react";
 import { toast } from "sonner";
 
 const RoomLobby = () => {
@@ -44,6 +44,21 @@ const RoomLobby = () => {
   const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, "").slice(0, 6);
     setJoinCode(value);
+  };
+
+  const handlePasteCode = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      const code = text.replace(/\D/g, "").slice(0, 6);
+      if (code.length > 0) {
+        setJoinCode(code);
+        toast.success("Code pasted!");
+      } else {
+        toast.error("No valid code found in clipboard");
+      }
+    } catch (err) {
+      toast.error("Failed to read clipboard");
+    }
   };
 
   return (
@@ -123,6 +138,14 @@ const RoomLobby = () => {
               className="text-center text-xl tracking-widest font-mono"
               maxLength={6}
             />
+            <Button 
+              onClick={handlePasteCode}
+              variant="outline"
+              size="icon"
+              title="Paste room code"
+            >
+              <Clipboard className="w-4 h-4" />
+            </Button>
             <Button 
               onClick={handleJoinRoom}
               disabled={joinCode.length !== 6 || isJoining}
