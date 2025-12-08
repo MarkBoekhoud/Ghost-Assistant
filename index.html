@@ -20,5 +20,13 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // Handle 404.html redirect from GitHub Pages
+      if (sessionStorage.redirect) {
+        const redirect = sessionStorage.redirect;
+        delete sessionStorage.redirect;
+        window.history.replaceState(null, null, '/Ghost-Assistant' + redirect);
+      }
+    </script>
   </body>
 </html>
