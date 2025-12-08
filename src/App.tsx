@@ -16,7 +16,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      <BrowserRouter basename="/Ghost-Assistent/">
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/ghost/:ghostName" element={<GhostDetail />} />
