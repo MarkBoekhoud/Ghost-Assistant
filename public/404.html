@@ -5,11 +5,14 @@
     <title>Redirecting...</title>
     <script>
       // GitHub Pages 404 redirect trick for SPAs
-      // Store the path the user was trying to access
-      const path = window.location.pathname.replace(/^\/Ghost-Assistant\//, '/');
-      sessionStorage.redirect = path;
-      // Redirect to the root with a marker
-      window.location.href = '/Ghost-Assistant/';
+      // Only redirect if we're not already on the root or index
+      const path = window.location.pathname;
+      if (!path.endsWith('/Ghost-Assistant/') && !path.endsWith('/Ghost-Assistant/index.html')) {
+        // Store the path and redirect to root
+        const redirectPath = path.replace(/^\/Ghost-Assistant\//, '/');
+        sessionStorage.redirect = redirectPath;
+        window.location.href = '/Ghost-Assistant/';
+      }
     </script>
   </head>
   <body></body>
