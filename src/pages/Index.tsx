@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useMemo, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { EvidenceSelector } from "@/components/EvidenceSelector";
 import { AbilitySelector } from "@/components/AbilitySelector";
@@ -15,15 +15,47 @@ import { toast } from "sonner";
 
 const Index = () => {
   const navigate = useNavigate();
-  const [difficulty, setDifficulty] = useState<Difficulty>("amateur");
-  const [evidenceStates, setEvidenceStates] = useState<Record<Evidence, EvidenceState>>(
-    () => Object.fromEntries(evidenceList.map(e => [e, "unknown"])) as Record<Evidence, EvidenceState>
-  );
-  const [selectedAbilities, setSelectedAbilities] = useState<Ability[]>([]);
-  const [selectedSpeed, setSelectedSpeed] = useState<Speed>(null);
-  const [selectedVisibility, setSelectedVisibility] = useState<Visibility>(null);
-  const [bpm, setBpm] = useState<number | null>(null);
-  const [spm, setSpm] = useState<number | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const parseList = (value: string | null) =>
+    value ? value.split(",").map(v => decodeURIComponent(v)).filter(Boolean) : [];
+
+  const initDifficulty = (): Difficulty => (searchParams.get("difficulty") as Difficulty) || "amateur";
+
+  const initEvidenceStates = (): Record<Evidence, EvidenceState> => {
+    const base = Object.fromEntries(evidenceList.map(e => [e, "unknown"])) as Record<Evidence, EvidenceState>;
+    const present = parseList(searchParams.get("present"));
+    const excluded = parseList(searchParams.get("excluded"));
+
+    present.forEach((p) => {
+      if (p in base) base[p as Evidence] = "present";
+    });
+    excluded.forEach((e) => {
+      if (e in base) base[e as Evidence] = "excluded";
+    });
+
+    return base;
+  };
+
+  const initAbilities = (): Ability[] => parseList(searchParams.get("abilities")) as Ability[];
+  const initSpeed = (): Speed => (searchParams.get("speed") as Speed) || null;
+  const initVisibility = (): Visibility => (searchParams.get("visibility") as Visibility) || null;
+  const initBpm = (): number | null => {
+    const v = searchParams.get("bpm");
+    return v ? Number(v) : null;
+  };
+  const initSpm = (): number | null => {
+    const v = searchParams.get("spm");
+    return v ? Number(v) : null;
+  };
+
+  const [difficulty, setDifficulty] = useState<Difficulty>(initDifficulty);
+  const [evidenceStates, setEvidenceStates] = useState<Record<Evidence, EvidenceState>>(initEvidenceStates);
+  const [selectedAbilities, setSelectedAbilities] = useState<Ability[]>(initAbilities);
+  const [selectedSpeed, setSelectedSpeed] = useState<Speed>(initSpeed);
+  const [selectedVisibility, setSelectedVisibility] = useState<Visibility>(initVisibility);
+  const [bpm, setBpm] = useState<number | null>(initBpm);
+  const [spm, setSpm] = useState<number | null>(initSpm);
 
   const presentEvidenceCount = useMemo(() => {
     return evidenceList.filter(e => evidenceStates[e] === "present").length;
@@ -212,7 +244,36 @@ const Index = () => {
     setBpm(null);
     setSpm(null);
     toast.success("Selection reset");
+    // Notify other components (timers/trackers) to reset
+    try {
+      window.dispatchEvent(new Event("app-reset"));
+    } catch (e) {}
   };
+
+  // Sync state -> URL search params so selections are preserved when navigating
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (difficulty) params.set("difficulty", difficulty);
+
+    const present = Object.entries(evidenceStates)
+      .filter(([, state]) => state === "present")
+      .map(([e]) => encodeURIComponent(e));
+    const excluded = Object.entries(evidenceStates)
+      .filter(([, state]) => state === "excluded")
+      .map(([e]) => encodeURIComponent(e));
+
+    if (present.length) params.set("present", present.join(","));
+    if (excluded.length) params.set("excluded", excluded.join(","));
+
+    if (selectedAbilities.length) params.set("abilities", selectedAbilities.map(a => encodeURIComponent(a)).join(","));
+    if (selectedSpeed) params.set("speed", selectedSpeed);
+    if (selectedVisibility) params.set("visibility", selectedVisibility);
+    if (bpm !== null && bpm !== undefined) params.set("bpm", String(bpm));
+    if (spm !== null && spm !== undefined) params.set("spm", String(spm));
+
+    // Replace so browser back/forward isn't flooded
+    setSearchParams(params, { replace: true });
+  }, [difficulty, evidenceStates, selectedAbilities, selectedSpeed, selectedVisibility, bpm, spm, setSearchParams]);
 
   const hasActiveFilters = 
     Object.values(evidenceStates).some(s => s !== "unknown") || 

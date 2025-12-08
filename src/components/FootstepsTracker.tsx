@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Footprints, RotateCcw } from "lucide-react";
@@ -51,6 +51,13 @@ export const FootstepsTracker = ({ onSPMChange }: FootstepsTrackerProps) => {
     onSPMChange(null);
     toast.success("Footsteps tracker reset");
   };
+
+  // Listen for global app reset
+  useEffect(() => {
+    const handler = () => handleReset();
+    window.addEventListener("app-reset", handler as EventListener);
+    return () => window.removeEventListener("app-reset", handler as EventListener);
+  }, []);
 
   return (
     <Card className="bg-card border-border">

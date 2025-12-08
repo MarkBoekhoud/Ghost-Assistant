@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Ghost } from "@/data/ghostData";
@@ -17,9 +17,30 @@ const speedLabels: Record<string, string> = {
 
 export const GhostCard = ({ ghost }: GhostCardProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleClick = () => {
-    navigate(`/ghost/${encodeURIComponent(ghost.name.toLowerCase())}`);
+    const search = location.search || "";
+
+    // If we're inside a room, preserve the room code in query so GhostDetail can return
+    const roomMatch = location.pathname.match(/\/room\/([^\/\?]+)/);
+    if (roomMatch) {
+      const roomCode = roomMatch[1];
+      const params = new URLSearchParams();
+      params.set("room", roomCode);
+      // preserve any existing search params too
+      if (search) {
+        const existing = new URLSearchParams(search);
+        existing.forEach((v, k) => {
+          if (k !== "room") params.set(k, v);
+        });
+      }
+      navigate(`/ghost/${encodeURIComponent(ghost.name.toLowerCase())}?${params.toString()}`);
+      return;
+    }
+
+    // Default: preserve current search
+    navigate(`/ghost/${encodeURIComponent(ghost.name.toLowerCase())}${search}`);
   };
 
   return (
@@ -38,8 +59,13 @@ export const GhostCard = ({ ghost }: GhostCardProps) => {
       </CardHeader>
       <CardContent className="p-0 space-y-1.5">
         <div className="flex flex-wrap gap-0.5">
-          {ghost.evidence.slice(0, 3).map((evidence) => (
-            <EvidenceBadge key={evidence} evidence={evidence} size="sm" />
+          {ghost.evidence.map((evidence) => (
+            <EvidenceBadge 
+              key={evidence} 
+              evidence={evidence} 
+              size="sm" 
+              isGuaranteed={ghost.guaranteedEvidence?.includes(evidence) ?? false}
+            />
           ))}
         </div>
         {/* <div className="flex flex-wrap gap-1">

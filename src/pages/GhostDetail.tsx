@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ghostDatabase } from "@/data/ghostData";
@@ -27,6 +27,7 @@ const visibilityLabels: Record<string, string> = {
 const GhostDetail = () => {
   const { ghostName } = useParams<{ ghostName: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const ghost = ghostDatabase.find(
     (g) => g.name.toLowerCase() === ghostName?.toLowerCase()
@@ -36,7 +37,16 @@ const GhostDetail = () => {
     return (
       <div className="min-h-screen bg-background p-4">
         <div className="max-w-4xl mx-auto">
-          <Button onClick={() => navigate("/")} variant="outline" size="sm">
+          <Button
+            onClick={() => {
+              const params = new URLSearchParams(location.search);
+              const room = params.get("room");
+              if (room) navigate(`/room/${room}`);
+              else navigate(`/${location.search}`);
+            }}
+            variant="outline"
+            size="sm"
+          >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
           </Button>
@@ -53,7 +63,17 @@ const GhostDetail = () => {
       <div className="max-w-4xl mx-auto space-y-3">
         {/* Back Button + Header */}
         <div className="flex items-center gap-3">
-          <Button onClick={() => navigate("/")} variant="outline" size="icon" className="h-8 w-8 shrink-0">
+          <Button
+            onClick={() => {
+              const params = new URLSearchParams(location.search);
+              const room = params.get("room");
+              if (room) navigate(`/room/${room}`);
+              else navigate(`/${location.search}`);
+            }}
+            variant="outline"
+            size="icon"
+            className="h-8 w-8 shrink-0"
+          >
             <ArrowLeft className="w-4 h-4" />
           </Button>
           <div className="flex items-center gap-2">
@@ -77,7 +97,11 @@ const GhostDetail = () => {
             </div>
             <div className="flex flex-wrap gap-1">
               {ghost.evidence.map((evidence) => (
-                <EvidenceBadge key={evidence} evidence={evidence} />
+                <EvidenceBadge
+                  key={evidence}
+                  evidence={evidence}
+                  isGuaranteed={ghost.guaranteedEvidence?.includes(evidence) ?? false}
+                />
               ))}
             </div>
           </div>

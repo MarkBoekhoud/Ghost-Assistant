@@ -8,6 +8,7 @@ interface EvidenceBadgeProps {
   className?: string;
   size?: "sm" | "default";
   showIcon?: boolean;
+  isGuaranteed?: boolean;
 }
 
 const evidenceStyles: Record<Evidence, string> = {
@@ -20,7 +21,7 @@ const evidenceStyles: Record<Evidence, string> = {
   "DOTS Projector": "bg-evidence-dots/20 text-evidence-dots border-evidence-dots/50",
 };
 
-export const EvidenceBadge = ({ evidence, className, size = "default", showIcon = true }: EvidenceBadgeProps) => {
+export const EvidenceBadge = ({ evidence, className, size = "default", showIcon = true, isGuaranteed = false }: EvidenceBadgeProps) => {
   return (
     <Badge 
       variant="outline" 
@@ -28,6 +29,7 @@ export const EvidenceBadge = ({ evidence, className, size = "default", showIcon 
         "border flex items-center gap-1",
         size === "sm" ? "text-[10px] px-1.5 py-0" : "text-xs",
         evidenceStyles[evidence],
+        isGuaranteed && "underline",
         className
       )}
     >

@@ -205,6 +205,10 @@ const Room = () => {
     setSelectedVisibility(null);
     setBpm(null);
     setSpm(null);
+    // Notify local components (timers/trackers) to reset
+    try {
+      window.dispatchEvent(new Event("app-reset"));
+    } catch (e) {}
   };
 
   const handleCopyCode = () => {

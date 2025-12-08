@@ -53,6 +53,13 @@ export const SmudgeTimer = ({ ghostName, duration }: SmudgeTimerProps) => {
     setTimeLeft(duration);
   };
 
+  // Listen for global app reset
+  useEffect(() => {
+    const handler = () => handleReset();
+    window.addEventListener("app-reset", handler as EventListener);
+    return () => window.removeEventListener("app-reset", handler as EventListener);
+  }, [duration]);
+
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
