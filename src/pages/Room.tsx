@@ -17,7 +17,7 @@ import { useRoom } from "@/hooks/useRoom";
 const Room = () => {
   const { roomCode } = useParams<{ roomCode: string }>();
   const navigate = useNavigate();
-  const { room, loading, error, updateEvidence, updateDifficulty, resetEvidence } = useRoom(roomCode);
+  const { room, loading, error, updateEvidence, updateDifficulty, resetEvidence, deleteRoom } = useRoom(roomCode);
 
   // Local state for non-synced features
   const [selectedAbilities, setSelectedAbilities] = useState<Ability[]>([]);
@@ -211,6 +211,14 @@ const Room = () => {
     } catch (e) {}
   };
 
+  const handleLeaveRoom = async () => {
+    if (roomCode) {
+      await deleteRoom(roomCode);
+      toast.success("Room deleted");
+    }
+    navigate("/multiplayer");
+  };
+
   const handleCopyCode = () => {
     if (roomCode) {
       navigator.clipboard.writeText(roomCode);
@@ -258,7 +266,7 @@ const Room = () => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => navigate("/multiplayer")}
+            onClick={handleLeaveRoom}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Leave

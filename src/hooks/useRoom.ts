@@ -142,6 +142,20 @@ export const useRoom = (roomCode?: string) => {
     }
   }, [room]);
 
+  // Delete a room (cleanup when empty)
+  const deleteRoom = useCallback(async (code: string): Promise<boolean> => {
+    const { error: deleteError } = await supabase
+      .from("rooms")
+      .delete()
+      .eq("code", code);
+    
+    if (deleteError) {
+      console.warn("Failed to delete room:", deleteError);
+      return false;
+    }
+    return true;
+  }, []);
+
   // Subscribe to realtime updates
   useEffect(() => {
     if (!roomCode) return;
@@ -184,5 +198,6 @@ export const useRoom = (roomCode?: string) => {
     updateEvidence,
     updateDifficulty,
     resetEvidence,
+    deleteRoom,
   };
 };
