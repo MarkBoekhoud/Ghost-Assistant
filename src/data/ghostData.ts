@@ -89,7 +89,7 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "Phantom",
     evidence: ["Spirit Box", "Fingerprints", "DOTS Projector"],
-    abilities: [],
+    abilities: ["Hunt Early"],
     speed: ["Normal", "LOS Speed up"],
     visibility: ["Invisible"],
     description: "Temporarily disappears when photographed.",
