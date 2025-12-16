@@ -6,12 +6,24 @@ import { toast } from "sonner";
 
 interface BPMTrackerProps {
   onBPMChange: (bpm: number | null) => void;
+  bpmValue?: number | null; // For multiplayer sync
 }
 
-export const BPMTracker = ({ onBPMChange }: BPMTrackerProps) => {
-  const [bpm, setBpm] = useState<number | null>(null);
+export const BPMTracker = ({ onBPMChange, bpmValue }: BPMTrackerProps) => {
+  const [bpm, setBpm] = useState<number | null>(bpmValue ?? null);
   const [clicks, setClicks] = useState<number[]>([]);
   const lastClickRef = useRef<number>(0);
+
+  // Sync with external value (multiplayer)
+  useEffect(() => {
+    if (bpmValue !== undefined) {
+      setBpm(bpmValue);
+      if (bpmValue === null) {
+        setClicks([]);
+        lastClickRef.current = 0;
+      }
+    }
+  }, [bpmValue]);
 
   const handleClick = () => {
     const now = Date.now();

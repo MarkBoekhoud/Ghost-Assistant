@@ -16,28 +16,40 @@ export type Database = {
     Tables: {
       rooms: {
         Row: {
+          bpm: number | null
           code: string
           created_at: string
           difficulty: string
           evidence: Json
           id: string
+          speed: string | null
+          spm: number | null
           updated_at: string
+          visibility: string | null
         }
         Insert: {
+          bpm?: number | null
           code: string
           created_at?: string
           difficulty?: string
           evidence?: Json
           id?: string
+          speed?: string | null
+          spm?: number | null
           updated_at?: string
+          visibility?: string | null
         }
         Update: {
+          bpm?: number | null
           code?: string
           created_at?: string
           difficulty?: string
           evidence?: Json
           id?: string
+          speed?: string | null
+          spm?: number | null
           updated_at?: string
+          visibility?: string | null
         }
         Relationships: []
       }

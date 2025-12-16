@@ -164,10 +164,9 @@ const Index = () => {
       );
 
       // Check guaranteed evidence on reduced evidence difficulties
-      // If we've found all possible evidence for this difficulty and the ghost's
-      // guaranteed evidence is not among them, this ghost is impossible
+      // Skip this check for The Mimic - its Ghost Orbs are EXTRA evidence, not required
       let guaranteedMatch = true;
-      if (ghost.guaranteedEvidence && baseMaxEvidence < 3 && presentEvidenceCount >= baseMaxEvidence) {
+      if (ghost.guaranteedEvidence && ghost.name !== "The Mimic" && baseMaxEvidence < 3 && presentEvidenceCount >= baseMaxEvidence) {
         guaranteedMatch = ghost.guaranteedEvidence.every(ge => presentEvidence.includes(ge));
       }
 
@@ -188,7 +187,7 @@ const Index = () => {
         (spm >= ghost.spmRange.min && spm <= ghost.spmRange.max);
 
       return presentMatch && excludedMatch && guaranteedMatch && abilityMatch && speedMatch && visibilityMatch && bpmMatch && spmMatch;
-    });
+    }).sort((a, b) => a.name.localeCompare(b.name));
   }, [evidenceStates, selectedAbilities, selectedSpeed, selectedVisibility, bpm, spm, presentEvidenceCount, baseMaxEvidence]);
 
   const disabledEvidence = useMemo(() => {

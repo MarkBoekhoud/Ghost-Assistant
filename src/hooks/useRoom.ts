@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Evidence, EvidenceState, evidenceList } from "@/data/ghostData";
 import { Difficulty } from "@/components/DifficultySelector";
+import { Speed } from "@/components/SpeedSelector";
+import { Visibility } from "@/components/VisibilitySelector";
 import { toast } from "sonner";
 
 export interface RoomData {
@@ -9,6 +11,10 @@ export interface RoomData {
   code: string;
   evidence: Record<Evidence, EvidenceState>;
   difficulty: Difficulty;
+  speed: Speed;
+  visibility: Visibility;
+  bpm: number | null;
+  spm: number | null;
   created_at: string;
   updated_at: string;
 }
@@ -41,11 +47,15 @@ export const useRoom = (roomCode?: string) => {
       setError("Room not found");
       setRoom(null);
     } else {
-      // Parse evidence from JSONB
+      // Parse evidence from JSONB and cast types
       const roomData: RoomData = {
         ...data,
         evidence: data.evidence as Record<Evidence, EvidenceState>,
         difficulty: data.difficulty as Difficulty,
+        speed: data.speed as Speed,
+        visibility: data.visibility as Visibility,
+        bpm: data.bpm,
+        spm: data.spm,
       };
       setRoom(roomData);
     }
@@ -80,6 +90,10 @@ export const useRoom = (roomCode?: string) => {
       ...data,
       evidence: data.evidence as Record<Evidence, EvidenceState>,
       difficulty: data.difficulty as Difficulty,
+      speed: data.speed as Speed,
+      visibility: data.visibility as Visibility,
+      bpm: data.bpm,
+      spm: data.spm,
     };
     setRoom(roomData);
     setLoading(false);
@@ -125,6 +139,62 @@ export const useRoom = (roomCode?: string) => {
     }
   }, [room]);
 
+  // Update speed
+  const updateSpeed = useCallback(async (speed: Speed) => {
+    if (!room) return;
+    
+    const { error: updateError } = await supabase
+      .from("rooms")
+      .update({ speed })
+      .eq("code", room.code);
+    
+    if (updateError) {
+      toast.error("Failed to sync speed");
+    }
+  }, [room]);
+
+  // Update visibility
+  const updateVisibility = useCallback(async (visibility: Visibility) => {
+    if (!room) return;
+    
+    const { error: updateError } = await supabase
+      .from("rooms")
+      .update({ visibility })
+      .eq("code", room.code);
+    
+    if (updateError) {
+      toast.error("Failed to sync visibility");
+    }
+  }, [room]);
+
+  // Update BPM
+  const updateBpm = useCallback(async (bpm: number | null) => {
+    if (!room) return;
+    
+    const { error: updateError } = await supabase
+      .from("rooms")
+      .update({ bpm })
+      .eq("code", room.code);
+    
+    if (updateError) {
+      toast.error("Failed to sync BPM");
+    }
+  }, [room]);
+
+  // Update SPM
+  const updateSpm = useCallback(async (spm: number | null) => {
+    if (!room) return;
+    
+    const { error: updateError } = await supabase
+      .from("rooms")
+      .update({ spm })
+      .eq("code", room.code);
+    
+    if (updateError) {
+      toast.error("Failed to sync footsteps");
+    }
+  }, [room]);
+
   // Reset room evidence
   const resetEvidence = useCallback(async () => {
     if (!room) return;
@@ -132,7 +202,7 @@ export const useRoom = (roomCode?: string) => {
     const evidence = defaultEvidence();
     const { error: updateError } = await supabase
       .from("rooms")
-      .update({ evidence })
+      .update({ evidence, speed: null, visibility: null, bpm: null, spm: null })
       .eq("code", room.code);
     
     if (updateError) {
@@ -178,6 +248,10 @@ export const useRoom = (roomCode?: string) => {
             ...newData,
             evidence: newData.evidence as Record<Evidence, EvidenceState>,
             difficulty: newData.difficulty as Difficulty,
+            speed: newData.speed as Speed,
+            visibility: newData.visibility as Visibility,
+            bpm: newData.bpm,
+            spm: newData.spm,
           });
         }
       )
@@ -197,6 +271,10 @@ export const useRoom = (roomCode?: string) => {
     fetchRoom,
     updateEvidence,
     updateDifficulty,
+    updateSpeed,
+    updateVisibility,
+    updateBpm,
+    updateSpm,
     resetEvidence,
     deleteRoom,
   };
