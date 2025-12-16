@@ -6,12 +6,24 @@ import { toast } from "sonner";
 
 interface FootstepsTrackerProps {
   onSPMChange: (spm: number | null) => void;
+  spmValue?: number | null; // For multiplayer sync
 }
 
-export const FootstepsTracker = ({ onSPMChange }: FootstepsTrackerProps) => {
-  const [spm, setSpm] = useState<number | null>(null);
+export const FootstepsTracker = ({ onSPMChange, spmValue }: FootstepsTrackerProps) => {
+  const [spm, setSpm] = useState<number | null>(spmValue ?? null);
   const [clicks, setClicks] = useState<number[]>([]);
   const lastClickRef = useRef<number>(0);
+
+  // Sync with external value (multiplayer)
+  useEffect(() => {
+    if (spmValue !== undefined) {
+      setSpm(spmValue);
+      if (spmValue === null) {
+        setClicks([]);
+        lastClickRef.current = 0;
+      }
+    }
+  }, [spmValue]);
 
   const handleClick = () => {
     const now = Date.now();

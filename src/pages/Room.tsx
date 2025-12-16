@@ -17,20 +17,32 @@ import { useRoom } from "@/hooks/useRoom";
 const Room = () => {
   const { roomCode } = useParams<{ roomCode: string }>();
   const navigate = useNavigate();
-  const { room, loading, error, updateEvidence, updateDifficulty, resetEvidence, deleteRoom } = useRoom(roomCode);
+  const { 
+    room, 
+    loading, 
+    error, 
+    updateEvidence, 
+    updateDifficulty, 
+    updateSpeed, 
+    updateVisibility, 
+    updateBpm, 
+    updateSpm, 
+    resetEvidence, 
+    deleteRoom 
+  } = useRoom(roomCode);
 
   // Local state for non-synced features
   const [selectedAbilities, setSelectedAbilities] = useState<Ability[]>([]);
   const [isLeaving, setIsLeaving] = useState(false);
-  const [selectedSpeed, setSelectedSpeed] = useState<Speed>(null);
-  const [selectedVisibility, setSelectedVisibility] = useState<Visibility>(null);
-  const [bpm, setBpm] = useState<number | null>(null);
-  const [spm, setSpm] = useState<number | null>(null);
 
   // Get synced state from room
   const difficulty = room?.difficulty || "amateur";
   const evidenceStates = room?.evidence || 
     (Object.fromEntries(evidenceList.map(e => [e, "unknown"])) as Record<Evidence, EvidenceState>);
+  const selectedSpeed = room?.speed || null;
+  const selectedVisibility = room?.visibility || null;
+  const bpm = room?.bpm || null;
+  const spm = room?.spm || null;
 
   const presentEvidenceCount = useMemo(() => {
     return evidenceList.filter(e => evidenceStates[e] === "present").length;
@@ -134,8 +146,9 @@ const Room = () => {
         !ghost.evidence.includes(evidence)
       );
 
+      // Skip guaranteed evidence check for The Mimic - its Ghost Orbs are EXTRA evidence
       let guaranteedMatch = true;
-      if (ghost.guaranteedEvidence && baseMaxEvidence < 3 && presentEvidenceCount >= baseMaxEvidence) {
+      if (ghost.guaranteedEvidence && ghost.name !== "The Mimic" && baseMaxEvidence < 3 && presentEvidenceCount >= baseMaxEvidence) {
         guaranteedMatch = ghost.guaranteedEvidence.every(ge => presentEvidence.includes(ge));
       }
 
@@ -156,7 +169,7 @@ const Room = () => {
         (spm >= ghost.spmRange.min && spm <= ghost.spmRange.max);
 
       return presentMatch && excludedMatch && guaranteedMatch && abilityMatch && speedMatch && visibilityMatch && bpmMatch && spmMatch;
-    });
+    }).sort((a, b) => a.name.localeCompare(b.name));
   }, [evidenceStates, selectedAbilities, selectedSpeed, selectedVisibility, bpm, spm, presentEvidenceCount, baseMaxEvidence]);
 
   const disabledEvidence = useMemo(() => {
@@ -202,10 +215,6 @@ const Room = () => {
   const handleReset = () => {
     resetEvidence();
     setSelectedAbilities([]);
-    setSelectedSpeed(null);
-    setSelectedVisibility(null);
-    setBpm(null);
-    setSpm(null);
     // Notify local components (timers/trackers) to reset
     try {
       window.dispatchEvent(new Event("app-reset"));
@@ -344,14 +353,14 @@ const Room = () => {
           
           {/* Speed & Visibility */}
           <div className="grid grid-cols-2 gap-2 md:gap-4">
-            <SpeedSelector speed={selectedSpeed} onChange={setSelectedSpeed} />
-            <VisibilitySelector visibility={selectedVisibility} onChange={setSelectedVisibility} />
+            <SpeedSelector speed={selectedSpeed} onChange={updateSpeed} />
+            <VisibilitySelector visibility={selectedVisibility} onChange={updateVisibility} />
           </div>
 
           {/* BPM & Footsteps Trackers */}
           <div className="grid grid-cols-2 gap-2 md:gap-4">
-            <BPMTracker onBPMChange={setBpm} />
-            <FootstepsTracker onSPMChange={setSpm} />
+            <BPMTracker onBPMChange={updateBpm} bpmValue={bpm} />
+            <FootstepsTracker onSPMChange={updateSpm} spmValue={spm} />
           </div>
 
           {/* Hunt Behavior */}
