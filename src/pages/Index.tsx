@@ -70,7 +70,7 @@ const Index = () => {
     if (!mimic) return false;
     
     // Mimic's main evidence + Ghost Orbs
-    const mimicMainEvidence: Evidence[] = ["Freezing Temps", "Spirit Box", "Fingerprints"];
+    const mimicMainEvidence: Evidence[] = ["Freezing Temps", "Spirit Box", "Ultraviolet"];
     const mimicAllEvidence: Evidence[] = [...mimicMainEvidence, "Ghost Orbs"];
     
     // Check if any present evidence is NOT in Mimic's possible evidence
@@ -84,7 +84,7 @@ const Index = () => {
 
   // Check if any Mimic main evidence is selected
   const selectedMimicMainEvidence = useMemo(() => {
-    const mimicMainEvidence: Evidence[] = ["Freezing Temps", "Spirit Box", "Fingerprints"];
+    const mimicMainEvidence: Evidence[] = ["Freezing Temps", "Spirit Box", "Ultraviolet"];
     return mimicMainEvidence.filter(e => evidenceStates[e] === "present");
   }, [evidenceStates]);
 
@@ -195,7 +195,7 @@ const Index = () => {
     const atBaseMax = presentEvidenceCount >= baseMaxEvidence;
     const atMimicMax = presentEvidenceCount >= maxEvidence;
     
-    const mimicMainEvidence: Evidence[] = ["Freezing Temps", "Spirit Box", "Fingerprints"];
+    const mimicMainEvidence: Evidence[] = ["Freezing Temps", "Spirit Box", "Ultraviolet"];
     const mimicProtectedEvidence: Evidence[] = mimicStillPossible
       ? selectedMimicMainEvidence.length > 0
         ? [...selectedMimicMainEvidence, "Ghost Orbs"] // Only protect selected + Ghost Orbs

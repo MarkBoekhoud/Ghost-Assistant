@@ -55,7 +55,7 @@ const Room = () => {
     
     if (!mimic) return false;
     
-    const mimicMainEvidence: Evidence[] = ["Freezing Temps", "Spirit Box", "Fingerprints"];
+    const mimicMainEvidence: Evidence[] = ["Freezing Temps", "Spirit Box", "Ultraviolet"];
     const mimicAllEvidence: Evidence[] = [...mimicMainEvidence, "Ghost Orbs"];
     
     const presentMatch = presentEvidence.every(e => mimicAllEvidence.includes(e));
@@ -65,7 +65,7 @@ const Room = () => {
   }, [evidenceStates]);
 
   const selectedMimicMainEvidence = useMemo(() => {
-    const mimicMainEvidence: Evidence[] = ["Freezing Temps", "Spirit Box", "Fingerprints"];
+    const mimicMainEvidence: Evidence[] = ["Freezing Temps", "Spirit Box", "Ultraviolet"];
     return mimicMainEvidence.filter(e => evidenceStates[e] === "present");
   }, [evidenceStates]);
 
@@ -177,7 +177,7 @@ const Room = () => {
     const atBaseMax = presentEvidenceCount >= baseMaxEvidence;
     const atMimicMax = presentEvidenceCount >= maxEvidence;
     
-    const mimicMainEvidence: Evidence[] = ["Freezing Temps", "Spirit Box", "Fingerprints"];
+    const mimicMainEvidence: Evidence[] = ["Freezing Temps", "Spirit Box", "Ultraviolet"];
     const mimicProtectedEvidence: Evidence[] = mimicStillPossible
       ? selectedMimicMainEvidence.length > 0
         ? [...selectedMimicMainEvidence, "Ghost Orbs"]

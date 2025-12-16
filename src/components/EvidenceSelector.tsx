@@ -19,7 +19,7 @@ interface EvidenceSelectorProps {
 const evidenceColorMap: Record<Evidence, { bg: string; border: string; text: string }> = {
   "EMF Level 5": { bg: "bg-evidence-emf/20", border: "border-evidence-emf", text: "text-evidence-emf" },
   "Spirit Box": { bg: "bg-evidence-spiritbox/20", border: "border-evidence-spiritbox", text: "text-evidence-spiritbox" },
-  "Fingerprints": { bg: "bg-evidence-fingerprints/20", border: "border-evidence-fingerprints", text: "text-evidence-fingerprints" },
+  "Ultraviolet": { bg: "bg-evidence-ultraviolet/20", border: "border-evidence-ultraviolet", text: "text-evidence-ultraviolet" },
   "Ghost Orbs": { bg: "bg-evidence-orbs/20", border: "border-evidence-orbs", text: "text-evidence-orbs" },
   "Ghost Writing": { bg: "bg-evidence-writing/20", border: "border-evidence-writing", text: "text-evidence-writing" },
   "Freezing Temps": { bg: "bg-evidence-freezing/20", border: "border-evidence-freezing", text: "text-evidence-freezing" },

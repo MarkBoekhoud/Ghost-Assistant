@@ -55,7 +55,7 @@ export default {
         evidence: {
           emf: "hsl(var(--evidence-emf))",
           spiritbox: "hsl(var(--evidence-spiritbox))",
-          fingerprints: "hsl(var(--evidence-fingerprints))",
+          ultraviolet: "hsl(var(--evidence-ultraviolet))",
           orbs: "hsl(var(--evidence-orbs))",
           writing: "hsl(var(--evidence-writing))",
           freezing: "hsl(var(--evidence-freezing))",
