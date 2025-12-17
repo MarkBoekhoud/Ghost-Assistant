@@ -48,6 +48,7 @@ const Index = () => {
     const v = searchParams.get("spm");
     return v ? Number(v) : null;
   };
+  const initExcludedGhosts = (): string[] => parseList(searchParams.get("excludedGhosts"));
 
   const [difficulty, setDifficulty] = useState<Difficulty>(initDifficulty);
   const [evidenceStates, setEvidenceStates] = useState<Record<Evidence, EvidenceState>>(initEvidenceStates);
@@ -56,6 +57,7 @@ const Index = () => {
   const [selectedVisibility, setSelectedVisibility] = useState<Visibility>(initVisibility);
   const [bpm, setBpm] = useState<number | null>(initBpm);
   const [spm, setSpm] = useState<number | null>(initSpm);
+  const [excludedGhosts, setExcludedGhosts] = useState<string[]>(initExcludedGhosts);
 
   const presentEvidenceCount = useMemo(() => {
     return evidenceList.filter(e => evidenceStates[e] === "present").length;
@@ -242,11 +244,20 @@ const Index = () => {
     setSelectedVisibility(null);
     setBpm(null);
     setSpm(null);
+    setExcludedGhosts([]);
     toast.success("Selection reset");
     // Notify other components (timers/trackers) to reset
     try {
       window.dispatchEvent(new Event("app-reset"));
     } catch (e) {}
+  };
+
+  const toggleGhostExclusion = (ghostName: string) => {
+    setExcludedGhosts(prev => 
+      prev.includes(ghostName) 
+        ? prev.filter(g => g !== ghostName)
+        : [...prev, ghostName]
+    );
   };
 
   // Sync state -> URL search params so selections are preserved when navigating
@@ -269,10 +280,11 @@ const Index = () => {
     if (selectedVisibility) params.set("visibility", selectedVisibility);
     if (bpm !== null && bpm !== undefined) params.set("bpm", String(bpm));
     if (spm !== null && spm !== undefined) params.set("spm", String(spm));
+    if (excludedGhosts.length) params.set("excludedGhosts", excludedGhosts.map(g => encodeURIComponent(g)).join(","));
 
     // Replace so browser back/forward isn't flooded
     setSearchParams(params, { replace: true });
-  }, [difficulty, evidenceStates, selectedAbilities, selectedSpeed, selectedVisibility, bpm, spm, setSearchParams]);
+  }, [difficulty, evidenceStates, selectedAbilities, selectedSpeed, selectedVisibility, bpm, spm, excludedGhosts, setSearchParams]);
 
   const hasActiveFilters = 
     Object.values(evidenceStates).some(s => s !== "unknown") || 
@@ -280,7 +292,8 @@ const Index = () => {
     selectedSpeed !== null ||
     selectedVisibility !== null ||
     bpm !== null || 
-    spm !== null;
+    spm !== null ||
+    excludedGhosts.length > 0;
 
   const scrollToGhosts = () => {
     document.getElementById('ghost-results')?.scrollIntoView({ behavior: 'smooth' });
@@ -395,7 +408,13 @@ const Index = () => {
         {/* Ghost Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4">
           {possibleGhosts.map((ghost) => (
-            <GhostCard key={ghost.name} ghost={ghost} />
+            <GhostCard 
+              key={ghost.name} 
+              ghost={ghost}
+              isExcluded={excludedGhosts.includes(ghost.name)}
+              onToggleExclude={() => toggleGhostExclusion(ghost.name)}
+              showExcludeButton={true}
+            />
           ))}
         </div>
 

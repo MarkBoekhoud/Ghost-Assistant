@@ -1,25 +1,32 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Ghost } from "@/data/ghostData";
-import { Ghost as GhostIcon, ChevronRight } from "lucide-react";
+import { Ghost as GhostIcon, ChevronRight, X, Check } from "lucide-react";
 import { EvidenceBadge } from "./EvidenceBadge";
+import { cn } from "@/lib/utils";
 
 interface GhostCardProps {
   ghost: Ghost;
+  isExcluded?: boolean;
+  onToggleExclude?: () => void;
+  showExcludeButton?: boolean;
 }
 
-const speedLabels: Record<string, string> = {
-  "Fast": "Snel",
-  "Normal": "Normaal",
-  "Slow": "Langzaam"
-};
-
-export const GhostCard = ({ ghost }: GhostCardProps) => {
+export const GhostCard = ({ 
+  ghost, 
+  isExcluded = false, 
+  onToggleExclude,
+  showExcludeButton = false,
+}: GhostCardProps) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent) => {
+    // Don't navigate if clicking the exclude button
+    if ((e.target as HTMLElement).closest('[data-exclude-button]')) {
+      return;
+    }
+    
     const search = location.search || "";
 
     // If we're inside a room, preserve the room code in query so GhostDetail can return
@@ -43,22 +50,70 @@ export const GhostCard = ({ ghost }: GhostCardProps) => {
     navigate(`/ghost/${encodeURIComponent(ghost.name.toLowerCase())}${search}`);
   };
 
+  const handleExcludeClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onToggleExclude?.();
+  };
+
   return (
     <Card 
-      className="hover:border-primary/50 transition-all animate-fade-in cursor-pointer group p-2 md:p-3"
+      className={cn(
+        "transition-all animate-fade-in cursor-pointer group p-2 md:p-3 relative",
+        isExcluded 
+          ? "opacity-40 bg-muted/50 border-muted" 
+          : "hover:border-primary/50"
+      )}
       onClick={handleClick}
     >
+      {/* Exclude/Include Button */}
+      {showExcludeButton && (
+        <button
+          data-exclude-button
+          onClick={handleExcludeClick}
+          className={cn(
+            "absolute top-1 right-1 p-1.5 rounded-full transition-all z-10",
+            "touch-manipulation min-h-[32px] min-w-[32px] flex items-center justify-center",
+            isExcluded 
+              ? "bg-success/20 text-success hover:bg-success/30" 
+              : "bg-destructive/20 text-destructive hover:bg-destructive/30"
+          )}
+          title={isExcluded ? "Include ghost" : "Exclude ghost"}
+        >
+          {isExcluded ? (
+            <Check className="w-3.5 h-3.5" />
+          ) : (
+            <X className="w-3.5 h-3.5" />
+          )}
+        </button>
+      )}
+
       <CardHeader className="p-0 pb-1.5">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5 min-w-0">
-            <GhostIcon className="w-4 h-4 text-primary shrink-0" />
-            <CardTitle className="text-sm md:text-base truncate">{ghost.name}</CardTitle>
+          <div className="flex items-center gap-1.5 min-w-0 pr-8">
+            <GhostIcon className={cn(
+              "w-4 h-4 shrink-0",
+              isExcluded ? "text-muted-foreground" : "text-primary"
+            )} />
+            <CardTitle className={cn(
+              "text-sm md:text-base truncate",
+              isExcluded && "line-through text-muted-foreground"
+            )}>
+              {ghost.name}
+            </CardTitle>
           </div>
-          <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+          <ChevronRight className={cn(
+            "w-4 h-4 transition-colors shrink-0",
+            isExcluded 
+              ? "text-muted-foreground/50" 
+              : "text-muted-foreground group-hover:text-primary"
+          )} />
         </div>
       </CardHeader>
       <CardContent className="p-0 space-y-1.5">
-        <div className="flex flex-wrap gap-0.5">
+        <div className={cn(
+          "flex flex-wrap gap-0.5",
+          isExcluded && "opacity-50"
+        )}>
           {ghost.evidence.map((evidence) => (
             <EvidenceBadge 
               key={evidence} 
@@ -68,13 +123,6 @@ export const GhostCard = ({ ghost }: GhostCardProps) => {
             />
           ))}
         </div>
-        {/* <div className="flex flex-wrap gap-1">
-          {ghost.speed.map((s) => (
-            <Badge key={s} variant="outline" className="text-[10px] px-1.5 py-0">
-              {speedLabels[s] || s}
-            </Badge>
-          ))}
-        </div> */}
       </CardContent>
     </Card>
   );

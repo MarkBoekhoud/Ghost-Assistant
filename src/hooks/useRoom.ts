@@ -15,6 +15,7 @@ export interface RoomData {
   visibility: Visibility;
   bpm: number | null;
   spm: number | null;
+  excludedGhosts: string[];
   created_at: string;
   updated_at: string;
 }
@@ -48,14 +49,19 @@ export const useRoom = (roomCode?: string) => {
       setRoom(null);
     } else {
       // Parse evidence from JSONB and cast types
+      const dataAny = data as any;
       const roomData: RoomData = {
-        ...data,
-        evidence: data.evidence as Record<Evidence, EvidenceState>,
-        difficulty: data.difficulty as Difficulty,
-        speed: data.speed as Speed,
-        visibility: data.visibility as Visibility,
-        bpm: data.bpm,
-        spm: data.spm,
+        id: dataAny.id,
+        code: dataAny.code,
+        evidence: dataAny.evidence as Record<Evidence, EvidenceState>,
+        difficulty: dataAny.difficulty as Difficulty,
+        speed: dataAny.speed as Speed,
+        visibility: dataAny.visibility as Visibility,
+        bpm: dataAny.bpm,
+        spm: dataAny.spm,
+        excludedGhosts: (dataAny.excluded_ghosts as string[]) || [],
+        created_at: dataAny.created_at,
+        updated_at: dataAny.updated_at,
       };
       setRoom(roomData);
     }
@@ -86,14 +92,19 @@ export const useRoom = (roomCode?: string) => {
       return null;
     }
     
+    const dataAny = data as any;
     const roomData: RoomData = {
-      ...data,
-      evidence: data.evidence as Record<Evidence, EvidenceState>,
-      difficulty: data.difficulty as Difficulty,
-      speed: data.speed as Speed,
-      visibility: data.visibility as Visibility,
-      bpm: data.bpm,
-      spm: data.spm,
+      id: dataAny.id,
+      code: dataAny.code,
+      evidence: dataAny.evidence as Record<Evidence, EvidenceState>,
+      difficulty: dataAny.difficulty as Difficulty,
+      speed: dataAny.speed as Speed,
+      visibility: dataAny.visibility as Visibility,
+      bpm: dataAny.bpm,
+      spm: dataAny.spm,
+      excludedGhosts: (dataAny.excluded_ghosts as string[]) || [],
+      created_at: dataAny.created_at,
+      updated_at: dataAny.updated_at,
     };
     setRoom(roomData);
     setLoading(false);
@@ -202,13 +213,32 @@ export const useRoom = (roomCode?: string) => {
     const evidence = defaultEvidence();
     const { error: updateError } = await supabase
       .from("rooms")
-      .update({ evidence, speed: null, visibility: null, bpm: null, spm: null })
+      .update({ evidence, speed: null, visibility: null, bpm: null, spm: null } as any)
       .eq("code", room.code);
     
     if (updateError) {
       toast.error("Failed to reset evidence");
     } else {
       toast.success("Evidence reset for all players");
+    }
+  }, [room]);
+
+  // Toggle ghost exclusion (blackout)
+  const toggleGhostExclusion = useCallback(async (ghostName: string) => {
+    if (!room) return;
+    
+    const currentExcluded = room.excludedGhosts || [];
+    const newExcluded = currentExcluded.includes(ghostName)
+      ? currentExcluded.filter(g => g !== ghostName)
+      : [...currentExcluded, ghostName];
+    
+    const { error: updateError } = await supabase
+      .from("rooms")
+      .update({ excluded_ghosts: newExcluded } as any)
+      .eq("code", room.code);
+    
+    if (updateError) {
+      toast.error("Failed to sync ghost exclusion");
     }
   }, [room]);
 
@@ -252,6 +282,7 @@ export const useRoom = (roomCode?: string) => {
             visibility: newData.visibility as Visibility,
             bpm: newData.bpm,
             spm: newData.spm,
+            excludedGhosts: (newData.excluded_ghosts as string[]) || [],
           });
         }
       )
@@ -277,5 +308,6 @@ export const useRoom = (roomCode?: string) => {
     updateSpm,
     resetEvidence,
     deleteRoom,
+    toggleGhostExclusion,
   };
 };

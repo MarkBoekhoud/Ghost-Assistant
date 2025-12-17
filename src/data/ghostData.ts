@@ -7,9 +7,31 @@ export type Evidence =
   | "Freezing Temps"
   | "DOTS Projector";
 
+// Hunt Sanity Categories:
+// - Late Hunt: < 40%
+// - Normal Hunt: > 40% (standard 50%)
+// - Early Hunt: > 50%
+// - Very Early Hunt: > 75%
+
+export type HuntCategory = "Late Hunt" | "Normal Hunt" | "Early Hunt" | "Very Early Hunt";
+
 export type Ability = 
   | "Hunt Early"
   | "Hunt Late";
+
+export const getHuntCategory = (threshold: number): HuntCategory => {
+  if (threshold >= 75) return "Very Early Hunt";
+  if (threshold > 50) return "Early Hunt";
+  if (threshold >= 40 && threshold <= 50) return "Normal Hunt";
+  return "Late Hunt";
+};
+
+export const huntCategoryColors: Record<HuntCategory, string> = {
+  "Late Hunt": "text-success border-success/50 bg-success/10",
+  "Normal Hunt": "text-muted-foreground border-muted-foreground/50 bg-muted/50",
+  "Early Hunt": "text-warning border-warning/50 bg-warning/10",
+  "Very Early Hunt": "text-destructive border-destructive/50 bg-destructive/10",
+};
 
 export type Speed = "Fast" | "Normal" | "Slow" | "LOS Speed up";
 export type VisibilityType = "Invisible" | "Normal" | "Visible";
