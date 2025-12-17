@@ -30,13 +30,21 @@ const Room = () => {
     updateBpm, 
     updateSpm, 
     resetEvidence, 
-    toggleGhostExclusion,
   } = useRoom(roomCode);
 
   const { players, playerId, playerCount } = useRoomPresence(roomCode);
 
   // Local state for non-synced features
   const [selectedAbilities, setSelectedAbilities] = useState<Ability[]>([]);
+  const [excludedGhosts, setExcludedGhosts] = useState<string[]>([]);
+
+  const toggleGhostExclusion = (ghostName: string) => {
+    setExcludedGhosts(prev => 
+      prev.includes(ghostName) 
+        ? prev.filter(g => g !== ghostName)
+        : [...prev, ghostName]
+    );
+  };
 
   // Get synced state from room
   const difficulty = room?.difficulty || "amateur";
@@ -46,7 +54,6 @@ const Room = () => {
   const selectedVisibility = room?.visibility || null;
   const bpm = room?.bpm || null;
   const spm = room?.spm || null;
-  const excludedGhosts = room?.excludedGhosts || [];
 
   const presentEvidenceCount = useMemo(() => {
     return evidenceList.filter(e => evidenceStates[e] === "present").length;
@@ -379,7 +386,7 @@ const Room = () => {
                 ? "Select filters to narrow down"
                 : `${possibleGhosts.length} ghost${possibleGhosts.length !== 1 ? "s" : ""} possible`}
               {excludedGhosts.length > 0 && (
-                <span className="ml-2 text-warning">• {excludedGhosts.length} excluded (shared)</span>
+                <span className="ml-2 text-warning">• {excludedGhosts.length} excluded</span>
               )}
             </p>
           </div>

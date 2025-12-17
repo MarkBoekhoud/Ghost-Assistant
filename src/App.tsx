@@ -12,10 +12,8 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-// Only use basename for production GitHub Pages deployment
-const basename = import.meta.env.PROD && window.location.hostname.includes('github.io') 
-  ? "/Ghost-Assistant/" 
-  : "/";
+// Use basename for deployment
+const basename = "/Ghost-Assistant/";
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
