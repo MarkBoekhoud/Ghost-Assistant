@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { EvidenceSelector } from "@/components/EvidenceSelector";
-import { AbilitySelector } from "@/components/AbilitySelector";
+import { AbilitySelector } from "@/components/AbilitySelector"; 
 import { GhostCard } from "@/components/GhostCard";
 import { BPMTracker } from "@/components/BPMTracker";
 import { FootstepsTracker } from "@/components/FootstepsTracker";
@@ -10,11 +10,12 @@ import { DifficultySelector, Difficulty, getEvidenceCount } from "@/components/D
 import { SpeedSelector, Speed } from "@/components/SpeedSelector";
 import { VisibilitySelector, Visibility } from "@/components/VisibilitySelector";
 import { PlayerPresence } from "@/components/PlayerPresence";
-import { ghostDatabase, evidenceList, abilityList, Evidence, Ability, EvidenceState, Speed as GhostSpeed, VisibilityType } from "@/data/ghostData";
+import { ghostDatabase, evidenceList, abilityList, Ability, Evidence, EvidenceState, Speed as GhostSpeed, VisibilityType } from "@/data/ghostData";
 import { RotateCcw, Ghost, ChevronDown, ArrowLeft, Users, Copy, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRoom } from "@/hooks/useRoom";
 import { useRoomPresence } from "@/hooks/useRoomPresence";
+import { supabase } from "@/integrations/supabase/client";
 
 const Room = () => {
   const { roomCode } = useParams<{ roomCode: string }>();
@@ -44,10 +45,14 @@ const Room = () => {
   const selectedVisibility = room?.visibility || null;
   const bpm = room?.bpm || null;
   const spm = room?.spm || null;
-  const selectedAbilities = room?.selectedAbilities || [];
+  
+  // FIX: Hier voegen we 'as Ability[]' toe om TypeScript gerust te stellen
+  const selectedAbilities = (room?.selectedAbilities || []) as Ability[];
+  
   const excludedGhosts = room?.excludedGhosts || [];
 
   const toggleAbility = (ability: Ability) => {
+    // Omdat selectedAbilities nu als Ability[] wordt gezien, werkt dit ook correct
     const newAbilities = selectedAbilities.includes(ability)
       ? selectedAbilities.filter(a => a !== ability)
       : [...selectedAbilities, ability];
@@ -148,7 +153,6 @@ const Room = () => {
         !ghost.evidence.includes(evidence)
       );
 
-      // Skip guaranteed evidence check for The Mimic - its Ghost Orbs are EXTRA evidence
       let guaranteedMatch = true;
       if (ghost.guaranteedEvidence && ghost.name !== "The Mimic" && baseMaxEvidence < 3 && presentEvidenceCount >= baseMaxEvidence) {
         guaranteedMatch = ghost.guaranteedEvidence.every(ge => presentEvidence.includes(ge));
@@ -180,10 +184,11 @@ const Room = () => {
     const atMimicMax = presentEvidenceCount >= maxEvidence;
     
     const mimicMainEvidence: Evidence[] = ["Freezing Temps", "Spirit Box", "Ultraviolet"];
+    
     const mimicProtectedEvidence: Evidence[] = mimicStillPossible
       ? selectedMimicMainEvidence.length > 0
-        ? [...selectedMimicMainEvidence, "Ghost Orbs"]
-        : [...mimicMainEvidence, "Ghost Orbs"]
+        ? [...selectedMimicMainEvidence, "Ghost Orbs" as Evidence]
+        : [...mimicMainEvidence, "Ghost Orbs" as Evidence]
       : [];
     
     evidenceList.forEach((evidence) => {
@@ -216,17 +221,30 @@ const Room = () => {
 
   const handleReset = () => {
     resetEvidence();
-    // Notify local components (timers/trackers) to reset
     try {
       window.dispatchEvent(new Event("app-reset"));
     } catch (e) {}
   };
 
-  const handleLeaveRoom = () => {
-    // Simply navigate away - don't delete the room
-    // Room will persist for other players
-    navigate("/multiplayer");
-    toast.success("Left room");
+  const handleLeaveRoom = async () => {
+    try {
+      if (players.length <= 1 && roomCode) {
+        console.log("Laatste speler vertrekt, room wordt verwijderd...");
+        const { error } = await supabase
+          .from('rooms')
+          .delete()
+          .eq('code', roomCode);
+
+        if (error) {
+          console.error("Kon room niet verwijderen:", error);
+        }
+      }
+    } catch (error) {
+      console.error("Error during leave:", error);
+    } finally {
+      navigate("/multiplayer");
+      toast.success("Left room");
+    }
   };
 
   const handleCopyCode = () => {
@@ -341,7 +359,7 @@ const Room = () => {
             <FootstepsTracker onSPMChange={updateSpm} spmValue={spm} />
           </div>
 
-          {/* Hunt Behavior */}
+          {/* Ability (Hunt Timing) Selector */}
           {abilityList.length > 0 && (
             <div className="bg-card p-3 rounded-lg border border-border">
               <AbilitySelector
@@ -359,7 +377,7 @@ const Room = () => {
             onClick={scrollToGhosts}
             className="w-full shadow-lg"
             size="lg"
-          >
+            >
             <span>View {possibleGhosts.length} ghost{possibleGhosts.length !== 1 ? "s" : ""}</span>
             <ChevronDown className="w-4 h-4 ml-2" />
           </Button>
@@ -391,7 +409,7 @@ const Room = () => {
           </Button>
         </div>
 
-        {/* Ghost Cards - Show all possible ghosts, with excluded ones dimmed */}
+        {/* Ghost Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4">
           {possibleGhosts.map((ghost) => (
             <GhostCard 
@@ -399,7 +417,6 @@ const Room = () => {
               ghost={ghost} 
               isExcluded={excludedGhosts.includes(ghost.name)}
               onToggleExclude={() => toggleGhostExclusion(ghost.name)}
-              showExcludeButton={true}
             />
           ))}
         </div>
