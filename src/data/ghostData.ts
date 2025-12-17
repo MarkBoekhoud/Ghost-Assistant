@@ -16,8 +16,10 @@ export type Evidence =
 export type HuntCategory = "Late Hunt" | "Normal Hunt" | "Early Hunt" | "Very Early Hunt";
 
 export type Ability = 
-  | "Hunt Early"
-  | "Hunt Late";
+  | "Very Early Hunt"
+  | "Early Hunt"
+  | "Normal Hunt"
+  | "Late Hunt";
 
 export const getHuntCategory = (threshold: number): HuntCategory => {
   if (threshold >= 75) return "Very Early Hunt";
@@ -71,8 +73,10 @@ export const evidenceList: Evidence[] = [
 ];
 
 export const abilityList: Ability[] = [
-  "Hunt Early",
-  "Hunt Late",
+  "Very Early Hunt",
+  "Early Hunt",
+  "Normal Hunt",
+  "Late Hunt",
 ];
 
 export const speedList: Speed[] = ["Slow", "Normal", "Fast", "LOS Speed up"];
@@ -82,7 +86,7 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "Banshee",
     evidence: ["Ultraviolet", "Ghost Orbs", "DOTS Projector"],
-    abilities: ["Hunt Early"],
+    abilities: ["Early Hunt"],
     speed: ["Normal", "LOS Speed up"],
     visibility: ["Normal"],
     description: "Hunts one specific person at a time.",
@@ -110,7 +114,7 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "Demon",
     evidence: ["Ultraviolet", "Ghost Writing", "Freezing Temps"],
-    abilities: ["Hunt Early"],
+    abilities: ["Early Hunt"],
     speed: ["Normal", "LOS Speed up"],
     visibility: ["Normal"],
     description: "Hunts very frequently and aggressively.",
@@ -201,7 +205,7 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "Mare",
     evidence: ["Spirit Box", "Ghost Orbs", "Ghost Writing"],
-    abilities: ["Hunt Early"],
+    abilities: ["Early Hunt"],
     speed: ["Normal", "LOS Speed up"],
     visibility: ["Normal"],
     description: "Hunts more often in the dark.",
@@ -262,7 +266,7 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "Obambo",
     evidence: ["Ghost Writing", "Ultraviolet", "DOTS Projector"],
-    abilities: ["Hunt Early", "Hunt Late"],
+    abilities: ["Early Hunt", "Late Hunt"],
     speed: ["Normal", "LOS Speed up"],
     visibility: ["Normal"],
     description: "The Obambo is the ghost of someone never properly laid to rest. Fickle and defensive, it flickers between states of calm and aggression.",
@@ -293,7 +297,7 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "Onryo",
     evidence: ["Spirit Box", "Ghost Orbs", "Freezing Temps"],
-    abilities: ["Hunt Early"],
+    abilities: ["Early Hunt"],
     speed: ["Normal", "LOS Speed up"],
     visibility: ["Normal"],
     description: "Triggered by extinguishing flames.",
@@ -310,7 +314,7 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "Phantom",
     evidence: ["Spirit Box", "Ultraviolet", "DOTS Projector"],
-    abilities: ["Hunt Early"],
+    abilities: ["Early Hunt"],
     speed: ["Normal", "LOS Speed up"],
     visibility: ["Invisible"],
     description: "Temporarily disappears when photographed.",
@@ -338,7 +342,7 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "Raiju",
     evidence: ["EMF Level 5", "Ghost Orbs", "DOTS Projector"],
-    abilities: ["Hunt Early"],
+    abilities: ["Early Hunt"],
     speed: ["Normal", "Fast", "LOS Speed up"],
     visibility: ["Normal"],
     description: "Moves faster near electronic equipment.",
@@ -369,7 +373,7 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "Shade",
     evidence: ["EMF Level 5", "Ghost Writing", "Freezing Temps"],
-    abilities: ["Hunt Late"],
+    abilities: ["Late Hunt"],
     speed: ["Normal", "LOS Speed up"],
     visibility: ["Normal"],
     description: "Avoids interaction when multiple players are nearby.",
@@ -398,7 +402,7 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "Thaye",
     evidence: ["Ghost Orbs", "Ghost Writing", "DOTS Projector"],
-    abilities: ["Hunt Early", "Hunt Late"],
+    abilities: ["Early Hunt", "Late Hunt"],
     speed: ["Slow", "Fast"],
     visibility: ["Normal"],
     description: "Ages over time, becoming slower and less active.",
@@ -458,7 +462,7 @@ export const ghostDatabase: Ghost[] = [
   {
     name: "Yokai",
     evidence: ["Spirit Box", "Ghost Orbs", "DOTS Projector"],
-    abilities: ["Hunt Early"],
+    abilities: ["Early Hunt"],
     speed: ["Normal", "LOS Speed up"],
     visibility: ["Normal"],
     description: "Triggered by voices nearby.",

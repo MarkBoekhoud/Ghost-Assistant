@@ -226,6 +226,7 @@ const Room = () => {
   const handleReset = () => {
     resetEvidence();
     setSelectedAbilities([]);
+    setExcludedGhosts([]);
     // Notify local components (timers/trackers) to reset
     try {
       window.dispatchEvent(new Event("app-reset"));

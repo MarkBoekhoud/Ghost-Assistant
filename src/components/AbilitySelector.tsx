@@ -9,8 +9,10 @@ interface AbilitySelectorProps {
 }
 
 const abilityLabels: Record<Ability, string> = {
-  "Hunt Early": "Hunts Early",
-  "Hunt Late": "Hunts Late"
+  "Very Early Hunt": "Very Early Hunt",
+  "Early Hunt": "Early Hunt",
+  "Normal Hunt": "Normal Hunt",
+  "Late Hunt": "Late Hunt"
 };
 
 export const AbilitySelector = ({ abilityList, selectedAbilities, onToggle }: AbilitySelectorProps) => {
