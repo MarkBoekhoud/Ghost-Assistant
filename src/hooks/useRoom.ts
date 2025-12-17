@@ -16,6 +16,7 @@ export interface RoomData {
   bpm: number | null;
   spm: number | null;
   excludedGhosts: string[];
+  selectedAbilities: string[];
   created_at: string;
   updated_at: string;
 }
@@ -60,6 +61,7 @@ export const useRoom = (roomCode?: string) => {
         bpm: dataAny.bpm,
         spm: dataAny.spm,
         excludedGhosts: (dataAny.excluded_ghosts as string[]) || [],
+        selectedAbilities: (dataAny.selected_abilities as string[]) || [],
         created_at: dataAny.created_at,
         updated_at: dataAny.updated_at,
       };
@@ -103,6 +105,7 @@ export const useRoom = (roomCode?: string) => {
       bpm: dataAny.bpm,
       spm: dataAny.spm,
       excludedGhosts: (dataAny.excluded_ghosts as string[]) || [],
+      selectedAbilities: (dataAny.selected_abilities as string[]) || [],
       created_at: dataAny.created_at,
       updated_at: dataAny.updated_at,
     };
@@ -213,7 +216,7 @@ export const useRoom = (roomCode?: string) => {
     const evidence = defaultEvidence();
     const { error: updateError } = await supabase
       .from("rooms")
-      .update({ evidence, speed: null, visibility: null, bpm: null, spm: null } as any)
+      .update({ evidence, speed: null, visibility: null, bpm: null, spm: null, selected_abilities: [], excluded_ghosts: [] } as any)
       .eq("code", room.code);
     
     if (updateError) {
@@ -239,6 +242,20 @@ export const useRoom = (roomCode?: string) => {
     
     if (updateError) {
       toast.error("Failed to sync ghost exclusion");
+    }
+  }, [room]);
+
+  // Update selected abilities
+  const updateSelectedAbilities = useCallback(async (abilities: string[]) => {
+    if (!room) return;
+    
+    const { error: updateError } = await supabase
+      .from("rooms")
+      .update({ selected_abilities: abilities } as any)
+      .eq("code", room.code);
+    
+    if (updateError) {
+      toast.error("Failed to sync selected abilities");
     }
   }, [room]);
 
@@ -283,6 +300,7 @@ export const useRoom = (roomCode?: string) => {
             bpm: newData.bpm,
             spm: newData.spm,
             excludedGhosts: (newData.excluded_ghosts as string[]) || [],
+            selectedAbilities: (newData.selected_abilities as string[]) || [],
           });
         }
       )
@@ -309,5 +327,6 @@ export const useRoom = (roomCode?: string) => {
     resetEvidence,
     deleteRoom,
     toggleGhostExclusion,
+    updateSelectedAbilities,
   };
 };

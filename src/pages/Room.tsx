@@ -30,21 +30,11 @@ const Room = () => {
     updateBpm, 
     updateSpm, 
     resetEvidence, 
+    toggleGhostExclusion,
+    updateSelectedAbilities,
   } = useRoom(roomCode);
 
   const { players, playerId, playerCount } = useRoomPresence(roomCode);
-
-  // Local state for non-synced features
-  const [selectedAbilities, setSelectedAbilities] = useState<Ability[]>([]);
-  const [excludedGhosts, setExcludedGhosts] = useState<string[]>([]);
-
-  const toggleGhostExclusion = (ghostName: string) => {
-    setExcludedGhosts(prev => 
-      prev.includes(ghostName) 
-        ? prev.filter(g => g !== ghostName)
-        : [...prev, ghostName]
-    );
-  };
 
   // Get synced state from room
   const difficulty = room?.difficulty || "amateur";
@@ -54,6 +44,15 @@ const Room = () => {
   const selectedVisibility = room?.visibility || null;
   const bpm = room?.bpm || null;
   const spm = room?.spm || null;
+  const selectedAbilities = room?.selectedAbilities || [];
+  const excludedGhosts = room?.excludedGhosts || [];
+
+  const toggleAbility = (ability: Ability) => {
+    const newAbilities = selectedAbilities.includes(ability)
+      ? selectedAbilities.filter(a => a !== ability)
+      : [...selectedAbilities, ability];
+    updateSelectedAbilities(newAbilities);
+  };
 
   const presentEvidenceCount = useMemo(() => {
     return evidenceList.filter(e => evidenceStates[e] === "present").length;
@@ -111,14 +110,6 @@ const Room = () => {
 
   const handleDifficultyChange = (newDifficulty: Difficulty) => {
     updateDifficulty(newDifficulty);
-  };
-
-  const toggleAbility = (ability: Ability) => {
-    setSelectedAbilities((prev) =>
-      prev.includes(ability)
-        ? prev.filter((a) => a !== ability)
-        : [...prev, ability]
-    );
   };
 
   const mapSpeedToGhostSpeed = (speed: Speed): GhostSpeed | null => {
@@ -225,8 +216,6 @@ const Room = () => {
 
   const handleReset = () => {
     resetEvidence();
-    setSelectedAbilities([]);
-    setExcludedGhosts([]);
     // Notify local components (timers/trackers) to reset
     try {
       window.dispatchEvent(new Event("app-reset"));
