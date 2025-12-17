@@ -1,7 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Ghost } from "@/data/ghostData";
-import { Ghost as GhostIcon, ChevronRight, X, Check } from "lucide-react";
+import { Ghost as GhostIcon, X, Check } from "lucide-react";
 import { EvidenceBadge } from "./EvidenceBadge";
 import { cn } from "@/lib/utils";
 
