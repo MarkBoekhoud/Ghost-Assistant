@@ -1,7 +1,7 @@
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ghostDatabase } from "@/data/ghostData";
+import { ghostDatabase, getHuntCategory, huntCategoryColors } from "@/data/ghostData";
 import { ArrowLeft, Ghost, Heart, Footprints, Zap, Shield, Lightbulb, Gauge, Eye, Brain } from "lucide-react";
 import { EvidenceBadge } from "@/components/EvidenceBadge";
 import { SmudgeTimer } from "@/components/SmudgeTimer";
@@ -106,7 +106,7 @@ const GhostDetail = () => {
             </div>
           </div>
 
-          {/* Hunt Sanity */}
+        {/* Hunt Sanity */}
           <div className="bg-card rounded-lg border border-border p-3 col-span-2">
             <div className="flex items-center gap-1.5 mb-2">
               <Brain className="w-4 h-4 text-purple-400" />
@@ -114,23 +114,34 @@ const GhostDetail = () => {
             </div>
             {ghost.huntSanity && ghost.huntSanity.length > 0 ? (
               <div className="space-y-1.5">
-                {ghost.huntSanity.map((sanity, index) => (
-                  <div key={index} className="flex items-center gap-2 flex-wrap">
-                    <Badge variant="outline" className="text-xs border-purple-400/50 text-purple-400 bg-purple-400/10">
-                      ≤{sanity.threshold}%
-                    </Badge>
-                    <span className="text-xs text-muted-foreground">
-                      {sanity.condition || "standard"}
-                    </span>
-                  </div>
-                ))}
+                {ghost.huntSanity.map((sanity, index) => {
+                  const category = getHuntCategory(sanity.threshold);
+                  const colorClass = huntCategoryColors[category];
+                  return (
+                    <div key={index} className="flex items-center gap-2 flex-wrap">
+                      <Badge variant="outline" className={`text-xs ${colorClass}`}>
+                        {category}
+                      </Badge>
+                      <Badge variant="outline" className="text-xs border-purple-400/50 text-purple-400 bg-purple-400/10">
+                        {sanity.threshold > 50 ? ">" : sanity.threshold < 40 ? "<" : "≤"}{sanity.threshold}%
+                      </Badge>
+                      {sanity.condition && (
+                        <span className="text-xs text-muted-foreground">
+                          {sanity.condition}
+                        </span>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             ) : (
               <div className="flex items-center gap-2">
+                <Badge variant="outline" className={`text-xs ${huntCategoryColors["Normal Hunt"]}`}>
+                  Normal Hunt
+                </Badge>
                 <Badge variant="outline" className="text-xs border-purple-400/50 text-purple-400 bg-purple-400/10">
                   ≤50%
                 </Badge>
-                <span className="text-xs text-muted-foreground">standard</span>
               </div>
             )}
           </div>

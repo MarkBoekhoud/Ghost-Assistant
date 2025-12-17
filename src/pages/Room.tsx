@@ -9,10 +9,12 @@ import { FootstepsTracker } from "@/components/FootstepsTracker";
 import { DifficultySelector, Difficulty, getEvidenceCount } from "@/components/DifficultySelector";
 import { SpeedSelector, Speed } from "@/components/SpeedSelector";
 import { VisibilitySelector, Visibility } from "@/components/VisibilitySelector";
+import { PlayerPresence } from "@/components/PlayerPresence";
 import { ghostDatabase, evidenceList, abilityList, Evidence, Ability, EvidenceState, Speed as GhostSpeed, VisibilityType } from "@/data/ghostData";
 import { RotateCcw, Ghost, ChevronDown, ArrowLeft, Users, Copy, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRoom } from "@/hooks/useRoom";
+import { useRoomPresence } from "@/hooks/useRoomPresence";
 
 const Room = () => {
   const { roomCode } = useParams<{ roomCode: string }>();
@@ -28,12 +30,13 @@ const Room = () => {
     updateBpm, 
     updateSpm, 
     resetEvidence, 
-    deleteRoom 
+    toggleGhostExclusion,
   } = useRoom(roomCode);
+
+  const { players, playerId, playerCount } = useRoomPresence(roomCode);
 
   // Local state for non-synced features
   const [selectedAbilities, setSelectedAbilities] = useState<Ability[]>([]);
-  const [isLeaving, setIsLeaving] = useState(false);
 
   // Get synced state from room
   const difficulty = room?.difficulty || "amateur";
@@ -43,6 +46,7 @@ const Room = () => {
   const selectedVisibility = room?.visibility || null;
   const bpm = room?.bpm || null;
   const spm = room?.spm || null;
+  const excludedGhosts = room?.excludedGhosts || [];
 
   const presentEvidenceCount = useMemo(() => {
     return evidenceList.filter(e => evidenceStates[e] === "present").length;
@@ -221,27 +225,11 @@ const Room = () => {
     } catch (e) {}
   };
 
-  const handleLeaveRoom = async () => {
-    if (!roomCode) {
-      navigate("/multiplayer");
-      return;
-    }
-    
-    setIsLeaving(true);
-    try {
-      const deleted = await deleteRoom(roomCode);
-      if (deleted) {
-        toast.success("Room deleted");
-      } else {
-        toast.error("Failed to delete room");
-      }
-    } catch (err) {
-      console.error("Error deleting room:", err);
-      toast.error("Error leaving room");
-    } finally {
-      navigate("/multiplayer");
-      setIsLeaving(false);
-    }
+  const handleLeaveRoom = () => {
+    // Simply navigate away - don't delete the room
+    // Room will persist for other players
+    navigate("/multiplayer");
+    toast.success("Left room");
   };
 
   const handleCopyCode = () => {
@@ -257,7 +245,8 @@ const Room = () => {
     selectedSpeed !== null ||
     selectedVisibility !== null ||
     bpm !== null || 
-    spm !== null;
+    spm !== null ||
+    excludedGhosts.length > 0;
 
   const scrollToGhosts = () => {
     document.getElementById('ghost-results')?.scrollIntoView({ behavior: 'smooth' });
@@ -292,27 +281,19 @@ const Room = () => {
             variant="ghost"
             size="sm"
             onClick={handleLeaveRoom}
-            disabled={isLeaving}
           >
-            {isLeaving ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Leaving...
-              </>
-            ) : (
-              <>
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Leave
-              </>
-            )}
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Leave
           </Button>
-          <div 
-            className="flex items-center gap-2 bg-card px-3 py-1.5 rounded-lg border border-border cursor-pointer hover:bg-secondary transition-colors"
-            onClick={handleCopyCode}
-          >
-            <Users className="w-4 h-4 text-primary" />
-            <span className="font-mono font-bold text-foreground">{roomCode}</span>
-            <Copy className="w-3 h-3 text-muted-foreground" />
+          <div className="flex items-center gap-2">
+            <PlayerPresence players={players} currentPlayerId={playerId} />
+            <div 
+              className="flex items-center gap-2 bg-card px-3 py-1.5 rounded-lg border border-border cursor-pointer hover:bg-secondary transition-colors"
+              onClick={handleCopyCode}
+            >
+              <span className="font-mono font-bold text-foreground">{roomCode}</span>
+              <Copy className="w-3 h-3 text-muted-foreground" />
+            </div>
           </div>
         </div>
 
@@ -397,6 +378,9 @@ const Room = () => {
               {possibleGhosts.length === ghostDatabase.length
                 ? "Select filters to narrow down"
                 : `${possibleGhosts.length} ghost${possibleGhosts.length !== 1 ? "s" : ""} possible`}
+              {excludedGhosts.length > 0 && (
+                <span className="ml-2 text-warning">• {excludedGhosts.length} excluded (shared)</span>
+              )}
             </p>
           </div>
           <Button
@@ -410,10 +394,16 @@ const Room = () => {
           </Button>
         </div>
 
-        {/* Ghost Cards */}
+        {/* Ghost Cards - Show all possible ghosts, with excluded ones dimmed */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4">
           {possibleGhosts.map((ghost) => (
-            <GhostCard key={ghost.name} ghost={ghost} />
+            <GhostCard 
+              key={ghost.name} 
+              ghost={ghost} 
+              isExcluded={excludedGhosts.includes(ghost.name)}
+              onToggleExclude={() => toggleGhostExclusion(ghost.name)}
+              showExcludeButton={true}
+            />
           ))}
         </div>
 

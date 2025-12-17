@@ -1,0 +1,45 @@
+import { Users, User } from "lucide-react";
+import { Player } from "@/hooks/useRoomPresence";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+interface PlayerPresenceProps {
+  players: Player[];
+  currentPlayerId: string;
+}
+
+export const PlayerPresence = ({ players, currentPlayerId }: PlayerPresenceProps) => {
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className="flex items-center gap-1.5 bg-primary/10 px-2 py-1 rounded-full cursor-default">
+            <Users className="w-3.5 h-3.5 text-primary" />
+            <span className="text-sm font-medium text-primary">{players.length}</span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" className="max-w-[200px]">
+          <div className="space-y-1">
+            <p className="text-xs font-semibold text-muted-foreground mb-1.5">In room:</p>
+            {players.map((player) => (
+              <div 
+                key={player.id} 
+                className="flex items-center gap-1.5 text-sm"
+              >
+                <User className="w-3 h-3" />
+                <span className={player.id === currentPlayerId ? "font-semibold text-primary" : ""}>
+                  {player.name}
+                  {player.id === currentPlayerId && " (you)"}
+                </span>
+              </div>
+            ))}
+          </div>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+};
