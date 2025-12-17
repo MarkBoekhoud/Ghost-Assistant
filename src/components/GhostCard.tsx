@@ -89,7 +89,7 @@ export const GhostCard = ({
 
       <CardHeader className="p-0 pb-1.5">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5 min-w-0 pr-8">
+          <div className="flex items-center gap-1.5 min-w-0">
             <GhostIcon className={cn(
               "w-4 h-4 shrink-0",
               isExcluded ? "text-muted-foreground" : "text-primary"
@@ -101,12 +101,6 @@ export const GhostCard = ({
               {ghost.name}
             </CardTitle>
           </div>
-          <ChevronRight className={cn(
-            "w-4 h-4 transition-colors shrink-0",
-            isExcluded 
-              ? "text-muted-foreground/50" 
-              : "text-muted-foreground group-hover:text-primary"
-          )} />
         </div>
       </CardHeader>
       <CardContent className="p-0 space-y-1.5">
