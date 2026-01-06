@@ -21,9 +21,7 @@ export type Database = {
           created_at: string
           difficulty: string
           evidence: Json
-          excluded_ghosts: string[] | null
           id: string
-          selected_abilities: string[] | null
           speed: string | null
           spm: number | null
           updated_at: string
@@ -35,9 +33,7 @@ export type Database = {
           created_at?: string
           difficulty?: string
           evidence?: Json
-          excluded_ghosts?: string[] | null
           id?: string
-          selected_abilities?: string[] | null
           speed?: string | null
           spm?: number | null
           updated_at?: string
@@ -49,9 +45,7 @@ export type Database = {
           created_at?: string
           difficulty?: string
           evidence?: Json
-          excluded_ghosts?: string[] | null
           id?: string
-          selected_abilities?: string[] | null
           speed?: string | null
           spm?: number | null
           updated_at?: string

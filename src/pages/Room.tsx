@@ -10,8 +10,10 @@ import { DifficultySelector, Difficulty, getEvidenceCount } from "@/components/D
 import { SpeedSelector, Speed } from "@/components/SpeedSelector";
 import { VisibilitySelector, Visibility } from "@/components/VisibilitySelector";
 import { PlayerPresence } from "@/components/PlayerPresence";
+import { AppLogo } from "@/components/AppLogo";
+import { NameInputDialog } from "@/components/NameInputDialog";
 import { ghostDatabase, evidenceList, abilityList, Ability, Evidence, EvidenceState, Speed as GhostSpeed, VisibilityType } from "@/data/ghostData";
-import { RotateCcw, Ghost, ChevronDown, ArrowLeft, Users, Copy, Loader2 } from "lucide-react";
+import { RotateCcw, ChevronDown, ArrowLeft, Copy, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRoom } from "@/hooks/useRoom";
 import { useRoomPresence } from "@/hooks/useRoomPresence";
@@ -35,7 +37,25 @@ const Room = () => {
     updateSelectedAbilities,
   } = useRoom(roomCode);
 
-  const { players, playerId, playerCount } = useRoomPresence(roomCode);
+  const { players, playerId, playerName, setPlayerName, playerCount } = useRoomPresence(roomCode);
+  
+  // Show name dialog if player hasn't set a custom name
+  const [showNameDialog, setShowNameDialog] = useState(false);
+  
+  useEffect(() => {
+    // Check if user needs to enter name (only show once per session for new rooms)
+    const hasEnteredName = sessionStorage.getItem(`room-name-entered-${roomCode}`);
+    if (!hasEnteredName && room) {
+      setShowNameDialog(true);
+    }
+  }, [room, roomCode]);
+
+  const handleNameSubmit = (name: string) => {
+    setPlayerName(name);
+    sessionStorage.setItem(`room-name-entered-${roomCode}`, "true");
+    setShowNameDialog(false);
+    toast.success(`Welcome, ${name}!`);
+  };
 
   // Get synced state from room
   const difficulty = room?.difficulty || "amateur";
@@ -312,10 +332,16 @@ const Room = () => {
           </div>
         </div>
 
+        {/* Name Input Dialog */}
+        <NameInputDialog 
+          open={showNameDialog} 
+          onSubmit={handleNameSubmit} 
+        />
+
         {/* Header */}
         <header className="text-center space-y-2 py-2 md:py-4">
           <div className="flex items-center justify-center gap-2">
-            <Ghost className="w-8 h-8 md:w-10 md:h-10 text-primary animate-ghost-glow" />
+            <AppLogo size="md" />
             <h1 className="text-2xl md:text-4xl font-bold text-foreground">
               Ghost Assistant
             </h1>
@@ -417,6 +443,7 @@ const Room = () => {
               ghost={ghost} 
               isExcluded={excludedGhosts.includes(ghost.name)}
               onToggleExclude={() => toggleGhostExclusion(ghost.name)}
+              showExcludeButton={true}
             />
           ))}
         </div>

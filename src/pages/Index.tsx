@@ -9,13 +9,16 @@ import { FootstepsTracker } from "@/components/FootstepsTracker";
 import { DifficultySelector, Difficulty, getEvidenceCount } from "@/components/DifficultySelector";
 import { SpeedSelector, Speed } from "@/components/SpeedSelector";
 import { VisibilitySelector, Visibility } from "@/components/VisibilitySelector";
+import { AppLogo } from "@/components/AppLogo";
+import { useScrollRestoration } from "@/hooks/useScrollRestoration";
 import { ghostDatabase, evidenceList, abilityList, Evidence, Ability, EvidenceState, Speed as GhostSpeed, VisibilityType } from "@/data/ghostData";
-import { RotateCcw, Ghost, ChevronDown, Users } from "lucide-react";
+import { RotateCcw, ChevronDown, Users } from "lucide-react";
 import { toast } from "sonner";
 
 const Index = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  useScrollRestoration();
 
   const parseList = (value: string | null) =>
     value ? value.split(",").map(v => decodeURIComponent(v)).filter(Boolean) : [];
@@ -305,7 +308,7 @@ const Index = () => {
         {/* Header */}
         <header className="text-center space-y-2 py-4 md:py-6">
           <div className="flex items-center justify-center gap-2">
-            <Ghost className="w-8 h-8 md:w-10 md:h-10 text-primary animate-ghost-glow" />
+            <AppLogo size="md" />
             <h1 className="text-2xl md:text-4xl font-bold text-foreground">
               Ghost Assistant
             </h1>

@@ -1,8 +1,9 @@
 import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ghostDatabase, getHuntCategory, huntCategoryColors } from "@/data/ghostData";
-import { ArrowLeft, Ghost, Heart, Footprints, Zap, Shield, Lightbulb, Gauge, Eye, Brain } from "lucide-react";
+import { ArrowLeft, Ghost, Heart, Footprints, Zap, Shield, Lightbulb, Gauge, Eye, Brain, ChevronLeft, ChevronRight } from "lucide-react";
 import { EvidenceBadge } from "@/components/EvidenceBadge";
 import { SmudgeTimer } from "@/components/SmudgeTimer";
 import {
@@ -28,10 +29,77 @@ const GhostDetail = () => {
   const { ghostName } = useParams<{ ghostName: string }>();
   const navigate = useNavigate();
   const location = useLocation();
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const ghost = ghostDatabase.find(
+  // Get sorted ghost list for navigation
+  const sortedGhosts = [...ghostDatabase].sort((a, b) => a.name.localeCompare(b.name));
+  const currentIndex = sortedGhosts.findIndex(
     (g) => g.name.toLowerCase() === ghostName?.toLowerCase()
   );
+
+  const ghost = currentIndex >= 0 ? sortedGhosts[currentIndex] : null;
+
+  // Swipe handling
+  const touchStartX = useRef<number>(0);
+  const touchEndX = useRef<number>(0);
+  const isSwiping = useRef<boolean>(false);
+
+  const navigateToGhost = useCallback((index: number) => {
+    if (index < 0 || index >= sortedGhosts.length) return;
+    const targetGhost = sortedGhosts[index];
+    const params = new URLSearchParams(location.search);
+    navigate(`/ghost/${encodeURIComponent(targetGhost.name.toLowerCase())}?${params.toString()}`, { replace: true });
+  }, [sortedGhosts, location.search, navigate]);
+
+  const goToPrev = useCallback(() => {
+    if (currentIndex > 0) {
+      navigateToGhost(currentIndex - 1);
+    }
+  }, [currentIndex, navigateToGhost]);
+
+  const goToNext = useCallback(() => {
+    if (currentIndex < sortedGhosts.length - 1) {
+      navigateToGhost(currentIndex + 1);
+    }
+  }, [currentIndex, sortedGhosts.length, navigateToGhost]);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    isSwiping.current = false;
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+    const diff = Math.abs(touchStartX.current - touchEndX.current);
+    if (diff > 30) {
+      isSwiping.current = true;
+    }
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    if (!isSwiping.current) return;
+    
+    const diff = touchStartX.current - touchEndX.current;
+    const minSwipeDistance = 75;
+
+    if (diff > minSwipeDistance) {
+      goToNext();
+    } else if (diff < -minSwipeDistance) {
+      goToPrev();
+    }
+    
+    isSwiping.current = false;
+  }, [goToNext, goToPrev]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") goToPrev();
+      if (e.key === "ArrowRight") goToNext();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [goToPrev, goToNext]);
 
   if (!ghost) {
     return (
@@ -59,28 +127,61 @@ const GhostDetail = () => {
   const showSmudgeTimer = ghost.smudgeTimer !== undefined;
 
   return (
-    <div className="min-h-screen bg-background p-3 md:p-6">
+    <div 
+      ref={containerRef}
+      className="min-h-screen bg-background p-3 md:p-6 touch-pan-y"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       <div className="max-w-4xl mx-auto space-y-3">
-        {/* Back Button + Header */}
-        <div className="flex items-center gap-3">
-          <Button
-            onClick={() => {
-              const params = new URLSearchParams(location.search);
-              const room = params.get("room");
-              if (room) navigate(`/room/${room}`);
-              else navigate(`/${location.search}`);
-            }}
-            variant="outline"
-            size="icon"
-            className="h-8 w-8 shrink-0"
-          >
-            <ArrowLeft className="w-4 h-4" />
-          </Button>
-          <div className="flex items-center gap-2">
-            <Ghost className="w-6 h-6 text-primary animate-ghost-glow" />
-            <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-              {ghost.name}
-            </h1>
+        {/* Back Button + Header + Navigation */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <Button
+              onClick={() => {
+                const params = new URLSearchParams(location.search);
+                const room = params.get("room");
+                if (room) navigate(`/room/${room}`);
+                else navigate(`/${location.search}`);
+              }}
+              variant="outline"
+              size="icon"
+              className="h-8 w-8 shrink-0"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </Button>
+            <div className="flex items-center gap-2 min-w-0">
+              <Ghost className="w-6 h-6 text-primary animate-ghost-glow shrink-0" />
+              <h1 className="text-xl md:text-3xl font-bold text-foreground truncate">
+                {ghost.name}
+              </h1>
+            </div>
+          </div>
+          
+          {/* Swipe Navigation Buttons */}
+          <div className="flex items-center gap-1 shrink-0">
+            <Button
+              onClick={goToPrev}
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              disabled={currentIndex <= 0}
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </Button>
+            <span className="text-xs text-muted-foreground min-w-[3rem] text-center">
+              {currentIndex + 1}/{sortedGhosts.length}
+            </span>
+            <Button
+              onClick={goToNext}
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              disabled={currentIndex >= sortedGhosts.length - 1}
+            >
+              <ChevronRight className="w-5 h-5" />
+            </Button>
           </div>
         </div>
 

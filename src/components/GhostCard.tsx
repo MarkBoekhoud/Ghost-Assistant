@@ -1,8 +1,9 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Ghost } from "@/data/ghostData";
-import { Ghost as GhostIcon, X, Check } from "lucide-react";
+import { X, Check } from "lucide-react";
 import { EvidenceBadge } from "./EvidenceBadge";
+import { GhostIconComponent } from "./GhostIcon";
 import { cn } from "@/lib/utils";
 
 interface GhostCardProps {
@@ -90,10 +91,11 @@ export const GhostCard = ({
       <CardHeader className="p-0 pb-1.5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5 min-w-0">
-            <GhostIcon className={cn(
-              "w-4 h-4 shrink-0",
-              isExcluded ? "text-muted-foreground" : "text-primary"
-            )} />
+            <GhostIconComponent 
+              ghostName={ghost.name} 
+              className="w-4 h-4"
+              isExcluded={isExcluded}
+            />
             <CardTitle className={cn(
               "text-sm md:text-base truncate",
               isExcluded && "line-through text-muted-foreground"
