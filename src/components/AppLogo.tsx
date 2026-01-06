@@ -1,7 +1,7 @@
 import { Ghost } from "lucide-react";
 
 // To use a custom logo, place your PNG in src/assets/ and import it here
-// import customLogo from "@/assets/custom-logo.png";
+import customLogo from "@/assets/ghost_assistant.png";
 
 interface AppLogoProps {
   className?: string;
@@ -9,7 +9,7 @@ interface AppLogoProps {
 }
 
 // Set to your custom logo path, or null to use default Ghost icon
-const CUSTOM_LOGO_URL: string | null = null;
+const CUSTOM_LOGO_URL: string | null = customLogo; 
 
 export const AppLogo = ({ className = "", size = "md" }: AppLogoProps) => {
   const sizeClasses = {
