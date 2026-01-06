@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 // Helper functie om het juiste pad te genereren voor GitHub Pages
 const getGhostImg = (filename: string) => {
   // Let op: '/Ghost-Assistant/' is jouw repository naam (base)
-  return `/Ghost-Assistant/ghosts/${filename}`;
+  return `/Ghost-Assistant/images/${filename}`;
 };
 
 // Map ghost names to custom icon URLs

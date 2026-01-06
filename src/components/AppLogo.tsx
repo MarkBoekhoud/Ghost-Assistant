@@ -10,7 +10,7 @@ interface AppLogoProps {
 
 // 2. Zet hier het harde pad naar je public map neer.
 // Dit werkt nu hetzelfde als je ghosts lijst.
-const CUSTOM_LOGO_URL: string | null = "/Ghost-Assistant/ghosts/ghost_assistant.png"; 
+const CUSTOM_LOGO_URL: string | null = "/Ghost-Assistant/images/ghost_assistant.png"; 
 
 export const AppLogo = ({ className = "", size = "md" }: AppLogoProps) => {
   const sizeClasses = {
