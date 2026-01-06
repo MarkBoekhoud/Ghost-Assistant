@@ -160,7 +160,7 @@ const GhostDetail = () => {
               {/* AANPASSING 3: Het oude <Ghost /> icoon is vervangen door jouw slimme component */}
               <GhostIconComponent 
                 ghostName={ghost.name}
-                className="w-8 h-8"
+                className="w-10 h-10"
               />
 
               <h1 className="text-xl md:text-3xl font-bold text-foreground truncate">
