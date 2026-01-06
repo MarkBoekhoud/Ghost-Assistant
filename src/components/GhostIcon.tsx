@@ -1,10 +1,10 @@
 import { Ghost as GhostIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Helper functie om het juiste pad te genereren voor GitHub Pages
+// We gebruiken import.meta.env.BASE_URL
+// Die bevat automatisch "/Ghost-Assistant/" (zoals ingesteld in vite.config)
 const getGhostImg = (filename: string) => {
-  // Let op: '/Ghost-Assistant/' is jouw repository naam (base)
-  return `/Ghost-Assistant/images/${filename}`;
+  return `${import.meta.env.BASE_URL}images/${filename}`;
 };
 
 // Map ghost names to custom icon URLs
