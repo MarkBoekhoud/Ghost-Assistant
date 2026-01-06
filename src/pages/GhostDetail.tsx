@@ -3,9 +3,13 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ghostDatabase, getHuntCategory, huntCategoryColors } from "@/data/ghostData";
-import { ArrowLeft, Ghost, Heart, Footprints, Zap, Shield, Lightbulb, Gauge, Eye, Brain, ChevronLeft, ChevronRight } from "lucide-react";
+// AANPASSING 1: 'Ghost' is hier verwijderd uit de import list omdat we hem vervangen
+import { ArrowLeft, Heart, Footprints, Zap, Shield, Lightbulb, Gauge, Eye, Brain, ChevronLeft, ChevronRight } from "lucide-react";
 import { EvidenceBadge } from "@/components/EvidenceBadge";
 import { SmudgeTimer } from "@/components/SmudgeTimer";
+// AANPASSING 2: Importeer je eigen slimme icoon component (pas het pad aan indien nodig)
+import { GhostIconComponent } from "@/components/GhostIcon";
+
 import {
   Accordion,
   AccordionContent,
@@ -114,7 +118,7 @@ const GhostDetail = () => {
             }}
             variant="outline"
             size="sm"
-          >
+            >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
           </Button>
@@ -152,7 +156,13 @@ const GhostDetail = () => {
               <ArrowLeft className="w-4 h-4" />
             </Button>
             <div className="flex items-center gap-2 min-w-0">
-              <Ghost className="w-6 h-6 text-primary animate-ghost-glow shrink-0" />
+              
+              {/* AANPASSING 3: Het oude <Ghost /> icoon is vervangen door jouw slimme component */}
+              <GhostIconComponent 
+                ghostName={ghost.name}
+                className="w-8 h-8"
+              />
+
               <h1 className="text-xl md:text-3xl font-bold text-foreground truncate">
                 {ghost.name}
               </h1>
