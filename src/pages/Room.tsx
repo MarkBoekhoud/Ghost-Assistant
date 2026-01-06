@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { useScrollRestoration } from "@/hooks/useScrollRestoration";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { EvidenceSelector } from "@/components/EvidenceSelector";
@@ -38,6 +39,7 @@ const Room = () => {
   } = useRoom(roomCode);
 
   const { players, playerId, playerName, setPlayerName, playerCount } = useRoomPresence(roomCode);
+  useScrollRestoration();
   
   // Show name dialog if player hasn't set a custom name
   const [showNameDialog, setShowNameDialog] = useState(false);
