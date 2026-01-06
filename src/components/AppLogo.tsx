@@ -1,15 +1,16 @@
 import { Ghost } from "lucide-react";
 
-// To use a custom logo, place your PNG in src/assets/ and import it here
-import customLogo from "@/assets/ghost_assistant.png";
+// 1. De import regel mag WEG (of uitgecommentarieerd):
+// import customLogo from "@/assets/ghost_assistant.png";
 
 interface AppLogoProps {
   className?: string;
   size?: "sm" | "md" | "lg";
 }
 
-// Set to your custom logo path, or null to use default Ghost icon
-const CUSTOM_LOGO_URL: string | null = customLogo; 
+// 2. Zet hier het harde pad naar je public map neer.
+// Dit werkt nu hetzelfde als je ghosts lijst.
+const CUSTOM_LOGO_URL: string | null = "/Ghost-Assistant/ghosts/ghost_assistant.png"; 
 
 export const AppLogo = ({ className = "", size = "md" }: AppLogoProps) => {
   const sizeClasses = {
