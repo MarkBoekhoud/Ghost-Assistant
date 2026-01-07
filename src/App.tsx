@@ -12,11 +12,9 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-// Use a basename only when the app is actually hosted under that sub-path (e.g. GitHub Pages).
-const GH_PAGES_BASENAME = "/Ghost-Assistant";
-const basename = import.meta.env.PROD && window.location.pathname.startsWith(GH_PAGES_BASENAME)
-  ? GH_PAGES_BASENAME
-  : "/";
+// Use basename for deployment
+const basename = "/Ghost-Assistant/";
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
