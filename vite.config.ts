@@ -9,7 +9,7 @@ export default defineConfig(({ mode }) => ({
   
   // DIT STUKJE HEB IK TOEGEVOEGD:
   build: {
-    outDir: "docs",
+    outDir: "dist",
   },
 
   server: {
