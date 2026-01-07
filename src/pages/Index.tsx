@@ -12,8 +12,9 @@ import { VisibilitySelector, Visibility } from "@/components/VisibilitySelector"
 import { AppLogo } from "@/components/AppLogo";
 import { useScrollRestoration } from "@/hooks/useScrollRestoration";
 import { ghostDatabase, evidenceList, abilityList, Evidence, Ability, EvidenceState, Speed as GhostSpeed, VisibilityType } from "@/data/ghostData";
-import { RotateCcw, ChevronDown, Users } from "lucide-react";
+import { RotateCcw, ChevronDown, Users, Info } from "lucide-react";
 import { toast } from "sonner";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -306,7 +307,35 @@ const Index = () => {
     <div className="min-h-screen bg-background p-3 md:p-6">
       <div className="max-w-7xl mx-auto space-y-4 md:space-y-6">
         {/* Header */}
-        <header className="text-center space-y-2 py-4 md:py-6">
+        <header className="text-center space-y-2 py-4 md:py-6 relative">
+          {/* Info Icon - Top Right */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute top-4 right-0 text-muted-foreground hover:text-foreground"
+              >
+                <Info className="w-5 h-5" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80" align="end">
+              <div className="space-y-2">
+                <h3 className="font-semibold text-foreground">About Ghost Assistant</h3>
+                <p className="text-sm text-muted-foreground">
+                  Ghost Assistant helps you identify ghost types in Phasmophobia. 
+                  Select evidence, behaviors, and traits to narrow down which ghost you're dealing with.
+                </p>
+                <ul className="text-sm text-muted-foreground space-y-1 mt-2">
+                  <li>• <strong>Evidence:</strong> Click to cycle through present/excluded/unknown</li>
+                  <li>• <strong>Speed & Visibility:</strong> Filter by ghost movement patterns</li>
+                  <li>• <strong>BPM/Footsteps:</strong> Tap to measure heartbeat or footstep speed</li>
+                  <li>• <strong>Multiplayer:</strong> Collaborate with your team in real-time</li>
+                </ul>
+              </div>
+            </PopoverContent>
+          </Popover>
+
           <div className="flex items-center justify-center gap-2">
             <AppLogo size="md" />
             <h1 className="text-2xl md:text-4xl font-bold text-foreground">
