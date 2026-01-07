@@ -17,9 +17,13 @@ export const PlayerPresence = ({ players, currentPlayerId }: PlayerPresenceProps
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <div className="flex items-center gap-1.5 bg-primary/10 px-2 py-1 rounded-full cursor-default">
-            <Users className="w-3.5 h-3.5 text-primary" />
+          <div className="flex items-center gap-1.5 bg-primary/10 px-2.5 py-1.5 rounded-full cursor-default min-h-[36px]">
+            <Users className="w-4 h-4 text-primary" />
             <span className="text-sm font-medium text-primary">{players.length}</span>
+            {/* Show first player name on mobile for visibility */}
+            <span className="hidden sm:inline text-xs text-primary/70 max-w-[80px] truncate">
+              {players.find(p => p.id === currentPlayerId)?.name || players[0]?.name}
+            </span>
           </div>
         </TooltipTrigger>
         <TooltipContent side="bottom" className="max-w-[200px]">

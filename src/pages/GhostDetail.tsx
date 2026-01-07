@@ -110,15 +110,10 @@ const GhostDetail = () => {
       <div className="min-h-screen bg-background p-4">
         <div className="max-w-4xl mx-auto">
           <Button
-            onClick={() => {
-              const params = new URLSearchParams(location.search);
-              const room = params.get("room");
-              if (room) navigate(`/room/${room}`);
-              else navigate(`/${location.search}`);
-            }}
+            onClick={() => navigate(-1)}
             variant="outline"
             size="sm"
-            >
+          >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
           </Button>
@@ -143,12 +138,7 @@ const GhostDetail = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 min-w-0 flex-1">
             <Button
-              onClick={() => {
-                const params = new URLSearchParams(location.search);
-                const room = params.get("room");
-                if (room) navigate(`/room/${room}`);
-                else navigate(`/${location.search}`);
-              }}
+              onClick={() => navigate(-1)}
               variant="outline"
               size="icon"
               className="h-8 w-8 shrink-0"

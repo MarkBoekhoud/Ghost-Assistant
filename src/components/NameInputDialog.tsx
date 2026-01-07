@@ -13,9 +13,10 @@ import { User } from "lucide-react";
 interface NameInputDialogProps {
   open: boolean;
   onSubmit: (name: string) => void;
+  onClose?: () => void;
 }
 
-export const NameInputDialog = ({ open, onSubmit }: NameInputDialogProps) => {
+export const NameInputDialog = ({ open, onSubmit, onClose }: NameInputDialogProps) => {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
 
@@ -42,7 +43,7 @@ export const NameInputDialog = ({ open, onSubmit }: NameInputDialogProps) => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={() => {}}>
+    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose?.()}>
       <DialogContent className="sm:max-w-md" onPointerDownOutside={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
