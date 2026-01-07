@@ -3,10 +3,22 @@ import { useLocation } from "react-router-dom";
 
 const scrollPositions = new Map<string, number>();
 
-export const useScrollRestoration = () => {
+type ScrollRestorationOptions = {
+  /**
+   * When false, restoration will not run yet. Useful for pages that load data.
+   * Defaults to true.
+   */
+  ready?: boolean;
+  /** Optional override for the key used to store positions. Defaults to pathname. */
+  key?: string;
+};
+
+export const useScrollRestoration = (options?: ScrollRestorationOptions) => {
   const location = useLocation();
   const isRestoring = useRef(false);
-  const pathKey = location.pathname;
+
+  const pathKey = options?.key ?? location.pathname;
+  const ready = options?.ready ?? true;
 
   // Save scroll position continuously
   useEffect(() => {
@@ -20,29 +32,39 @@ export const useScrollRestoration = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [pathKey]);
 
-  // Restore scroll position when component mounts
+  // Restore scroll position when the page is ready
   useEffect(() => {
-    const savedPosition = scrollPositions.get(pathKey);
-    
-    if (savedPosition !== undefined && savedPosition > 0) {
-      isRestoring.current = true;
-      
-      // Wait for content to render, then restore
-      const restore = () => {
-        window.scrollTo(0, savedPosition);
-        setTimeout(() => {
-          isRestoring.current = false;
-        }, 100);
-      };
+    if (!ready) return;
 
-      // Try multiple times to ensure content is loaded
-      requestAnimationFrame(() => {
-        restore();
-        // Backup restore after a small delay
-        setTimeout(restore, 50);
-      });
-    }
-  }, [pathKey]);
+    const savedPosition = scrollPositions.get(pathKey);
+    if (savedPosition === undefined || savedPosition <= 0) return;
+
+    isRestoring.current = true;
+
+    const restore = () => {
+      window.scrollTo(0, savedPosition);
+    };
+
+    // Try a few times after readiness to ensure layout/content is in place.
+    let attempts = 0;
+    const maxAttempts = 10;
+
+    const tick = () => {
+      restore();
+      attempts += 1;
+
+      if (attempts >= maxAttempts) {
+        isRestoring.current = false;
+        return;
+      }
+
+      setTimeout(tick, 75);
+    };
+
+    requestAnimationFrame(() => {
+      tick();
+    });
+  }, [pathKey, ready]);
 
   // Manual save function
   const savePosition = useCallback(() => {
