@@ -314,9 +314,10 @@ const Index = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute top-4 right-0 text-muted-foreground hover:text-foreground min-w-[44px] min-h-[44px] w-11 h-11"
+                aria-label="About Ghost Assistant"
+                className="absolute top-4 right-0 text-muted-foreground hover:text-foreground min-w-[56px] min-h-[56px] w-14 h-14"
               >
-                <Info className="w-5 h-5" />
+                <Info className="w-7 h-7" />
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-80" align="end">

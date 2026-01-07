@@ -39,7 +39,7 @@ const Room = () => {
   } = useRoom(roomCode);
 
   const { players, playerId, playerName, setPlayerName, playerCount } = useRoomPresence(roomCode);
-  useScrollRestoration();
+  useScrollRestoration({ ready: !loading });
   
   // Show name dialog if player hasn't set a custom name
   const [showNameDialog, setShowNameDialog] = useState(false);
@@ -333,6 +333,25 @@ const Room = () => {
             </div>
           </div>
         </div>
+
+        {/* Mobile: always-visible player list */}
+        <section className="sm:hidden bg-card rounded-lg border border-border p-3">
+          <p className="text-xs font-semibold text-muted-foreground mb-2">Players in room</p>
+          <div className="flex flex-wrap gap-2">
+            {players.map((p) => (
+              <div
+                key={p.id}
+                className={`px-2.5 py-1 rounded-full border text-sm truncate max-w-[45vw] ${
+                  p.id === playerId
+                    ? "bg-primary/10 border-primary/30 text-primary"
+                    : "bg-background border-border text-foreground"
+                }`}
+              >
+                {p.name}{p.id === playerId ? " (you)" : ""}
+              </div>
+            ))}
+          </div>
+        </section>
 
         {/* Name Input Dialog */}
         <NameInputDialog 
