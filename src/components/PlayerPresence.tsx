@@ -21,9 +21,9 @@ export const PlayerPresence = ({ players, currentPlayerId }: PlayerPresenceProps
             <Users className="w-4 h-4 text-primary" />
             <span className="text-sm font-medium text-primary">{players.length}</span>
             {/* Show a name on mobile for visibility */}
-            <span className="sm:hidden text-xs text-primary/70 max-w-[120px] truncate">
+            {/* <span className="sm:hidden text-xs text-primary/70 max-w-[120px] truncate">
               {players.find((p) => p.id === currentPlayerId)?.name || players[0]?.name}
-            </span>
+            </span> */}
           </div>
         </TooltipTrigger>
         <TooltipContent side="bottom" className="max-w-[200px]">
