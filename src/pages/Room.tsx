@@ -337,7 +337,14 @@ const Room = () => {
         {/* Name Input Dialog */}
         <NameInputDialog 
           open={showNameDialog} 
-          onSubmit={handleNameSubmit} 
+          onSubmit={handleNameSubmit}
+          onClose={() => {
+            // Generate a default name if closed without entering
+            const defaultName = `Player${Math.floor(Math.random() * 1000)}`;
+            setPlayerName(defaultName);
+            sessionStorage.setItem(`room-name-entered-${roomCode}`, "true");
+            setShowNameDialog(false);
+          }}
         />
 
         {/* Header */}

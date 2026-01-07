@@ -314,7 +314,7 @@ const Index = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute top-4 right-0 text-muted-foreground hover:text-foreground"
+                className="absolute top-4 right-0 text-muted-foreground hover:text-foreground min-w-[44px] min-h-[44px] w-11 h-11"
               >
                 <Info className="w-5 h-5" />
               </Button>
