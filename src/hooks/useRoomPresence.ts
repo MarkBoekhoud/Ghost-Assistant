@@ -1,10 +1,19 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import type { RealtimeChannel } from "@supabase/supabase-js";
 
 export interface Player {
   id: string;
   name: string;
   joinedAt: string;
+}
+
+export interface RoomNotification {
+  type: "success" | "error" | "info";
+  message: string;
+  senderId: string;
+  senderName: string;
 }
 
 const generatePlayerId = (): string => {
@@ -27,11 +36,28 @@ export const useRoomPresence = (roomCode?: string) => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [playerId] = useState(generatePlayerId);
   const [playerName, setPlayerNameState] = useState(getPlayerName);
+  const broadcastChannelRef = useRef<RealtimeChannel | null>(null);
 
   const setPlayerName = useCallback((name: string) => {
     localStorage.setItem("ghost-player-name", name);
     setPlayerNameState(name);
   }, []);
+
+  // Function to broadcast a notification to all players in the room
+  const broadcastNotification = useCallback((type: RoomNotification["type"], message: string) => {
+    if (!broadcastChannelRef.current) return;
+    
+    broadcastChannelRef.current.send({
+      type: "broadcast",
+      event: "room-notification",
+      payload: {
+        type,
+        message,
+        senderId: playerId,
+        senderName: playerName,
+      } as RoomNotification,
+    });
+  }, [playerId, playerName]);
 
   useEffect(() => {
     if (!roomCode) return;
@@ -43,6 +69,9 @@ export const useRoomPresence = (roomCode?: string) => {
         },
       },
     });
+
+    // Store reference for broadcasting
+    broadcastChannelRef.current = channel;
 
     channel
       .on("presence", { event: "sync" }, () => {
@@ -64,9 +93,40 @@ export const useRoomPresence = (roomCode?: string) => {
       })
       .on("presence", { event: "join" }, ({ key, newPresences }) => {
         console.log("Player joined:", key, newPresences);
+        // Show toast when another player joins
+        if (key !== playerId && newPresences && newPresences.length > 0) {
+          const presence = newPresences[0] as any;
+          const name = presence.name || `Player ${key.slice(0, 4)}`;
+          toast.info(`${name} joined the room`);
+        }
       })
       .on("presence", { event: "leave" }, ({ key, leftPresences }) => {
         console.log("Player left:", key, leftPresences);
+        // Show toast when another player leaves
+        if (key !== playerId && leftPresences && leftPresences.length > 0) {
+          const presence = leftPresences[0] as any;
+          const name = presence.name || `Player ${key.slice(0, 4)}`;
+          toast.info(`${name} left the room`);
+        }
+      })
+      .on("broadcast", { event: "room-notification" }, ({ payload }) => {
+        const notification = payload as RoomNotification;
+        // Show notification from other players
+        if (notification.senderId !== playerId) {
+          const displayMessage = `${notification.senderName}: ${notification.message}`;
+          switch (notification.type) {
+            case "success":
+              toast.success(displayMessage);
+              break;
+            case "error":
+              toast.error(displayMessage);
+              break;
+            case "info":
+            default:
+              toast.info(displayMessage);
+              break;
+          }
+        }
       })
       .subscribe(async (status) => {
         if (status === "SUBSCRIBED") {
@@ -78,6 +138,7 @@ export const useRoomPresence = (roomCode?: string) => {
       });
 
     return () => {
+      broadcastChannelRef.current = null;
       channel.untrack();
       supabase.removeChannel(channel);
     };
@@ -89,5 +150,6 @@ export const useRoomPresence = (roomCode?: string) => {
     playerName,
     setPlayerName,
     playerCount: players.length,
+    broadcastNotification,
   };
 };
