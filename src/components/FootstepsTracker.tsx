@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Footprints, RotateCcw } from "lucide-react";
-import { toast } from "sonner";
 
 interface FootstepsTrackerProps {
   onSPMChange: (spm: number | null) => void;
@@ -31,7 +30,6 @@ export const FootstepsTracker = ({ onSPMChange, spmValue }: FootstepsTrackerProp
     if (lastClickRef.current === 0) {
       lastClickRef.current = now;
       setClicks([now]);
-      toast.info("Keep clicking to the rhythm of the footsteps");
       return;
     }
 
@@ -65,7 +63,6 @@ export const FootstepsTracker = ({ onSPMChange, spmValue }: FootstepsTrackerProp
 
   const handleReset = () => {
     resetState();
-    toast.success("Footsteps tracker reset");
   };
 
   // Listen for global app reset (no individual toast)
@@ -78,23 +75,12 @@ export const FootstepsTracker = ({ onSPMChange, spmValue }: FootstepsTrackerProp
   return (
     <Card className="bg-card border-border">
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="text-xl flex items-center gap-2">
-              <Footprints className="w-5 h-5 text-warning" />
-              Footsteps Tracker
-            </CardTitle>
-            <CardDescription>Click to the rhythm of the ghost footsteps</CardDescription>
-          </div>
-          {spm && (
-            <Button
-              onClick={handleReset}
-              variant="outline"
-              size="sm"
-            >
-              <RotateCcw className="w-4 h-4" />
-            </Button>
-          )}
+        <div>
+          <CardTitle className="text-xl flex items-center gap-2">
+            <Footprints className="w-5 h-5 text-warning" />
+            Footsteps Tracker
+          </CardTitle>
+          <CardDescription>Click to the rhythm of the ghost footsteps</CardDescription>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -113,6 +99,17 @@ export const FootstepsTracker = ({ onSPMChange, spmValue }: FootstepsTrackerProp
             <span>Click here</span>
           )}
         </Button>
+        
+        {spm && (
+          <Button
+            onClick={handleReset}
+            variant="outline"
+            className="w-full"
+          >
+            <RotateCcw className="w-4 h-4 mr-2" />
+            Reset
+          </Button>
+        )}
         
         {clicks.length > 0 && clicks.length < 3 && (
           <p className="text-sm text-muted-foreground text-center">

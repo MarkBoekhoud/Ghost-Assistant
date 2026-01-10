@@ -48,9 +48,11 @@ export const useRoomPresence = (roomCode?: string) => {
   const broadcastNotification = useCallback((type: RoomNotification["type"], message: string, toastId?: string) => {
     if (!broadcastChannelRef.current) return;
     
-    const notificationId = toastId || `${playerId}-${Date.now()}`;
+    // Use a fixed ID for action toasts so only one shows at a time
+    const notificationId = toastId || "room-action";
     
-    // Show toast locally for the sender
+    // Dismiss any existing action toast and show new one
+    toast.dismiss("room-action");
     toast[type](message, { id: notificationId });
     
     // Broadcast to other players
@@ -122,7 +124,9 @@ export const useRoomPresence = (roomCode?: string) => {
         // Show notification from other players
         if (notification.senderId !== playerId) {
           const displayMessage = `${notification.senderName}: ${notification.message}`;
-          const toastOptions = notification.toastId ? { id: `${notification.toastId}-${playerId}` } : {};
+          // Dismiss any existing action toast and show new one (single action toast at a time)
+          toast.dismiss("room-action");
+          const toastOptions = { id: "room-action" };
           switch (notification.type) {
             case "success":
               toast.success(displayMessage, toastOptions);
