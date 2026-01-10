@@ -335,7 +335,7 @@ const Room = () => {
           </div>
         </div>
 
-        {/* Mobile: always-visible player list */}
+        {/* Mobile: always-visible player list
         <section className="sm:hidden bg-card rounded-lg border border-border p-3">
           <p className="text-xs font-semibold text-muted-foreground mb-2">Players in room</p>
           <div className="flex flex-wrap gap-2">
@@ -352,7 +352,7 @@ const Room = () => {
               </div>
             ))}
           </div>
-        </section>
+        </section> */}
 
         {/* Name Input Dialog */}
         <NameInputDialog 
