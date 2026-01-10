@@ -63,18 +63,19 @@ const RoomLobby = () => {
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-6">
-      <div className="max-w-md mx-auto space-y-6">
-        {/* Back Button */}
+      {/* Back Button - Outside centered container */}
+      <div className="max-w-7xl mx-auto mb-4">
         <Button
           variant="ghost"
           size="sm"
           onClick={() => navigate("/")}
-          className="mb-4"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Solo Mode
         </Button>
+      </div>
 
+      <div className="max-w-md mx-auto space-y-6">
         {/* Header */}
         <header className="text-center space-y-2 py-6">
           <div className="flex items-center justify-center gap-2">
