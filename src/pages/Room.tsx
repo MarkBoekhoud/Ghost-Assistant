@@ -243,8 +243,7 @@ const Room = () => {
 
   const handleReset = () => {
     resetEvidence();
-    broadcastNotification("success", "Reset evidence");
-    toast.success("Evidence reset");
+    broadcastNotification("success", "Evidence reset", "reset-evidence");
     try {
       window.dispatchEvent(new Event("app-reset"));
     } catch (e) {}

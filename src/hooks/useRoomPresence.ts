@@ -14,6 +14,7 @@ export interface RoomNotification {
   message: string;
   senderId: string;
   senderName: string;
+  toastId?: string; // Unique ID to prevent duplicate toasts
 }
 
 const generatePlayerId = (): string => {
@@ -44,9 +45,15 @@ export const useRoomPresence = (roomCode?: string) => {
   }, []);
 
   // Function to broadcast a notification to all players in the room
-  const broadcastNotification = useCallback((type: RoomNotification["type"], message: string) => {
+  const broadcastNotification = useCallback((type: RoomNotification["type"], message: string, toastId?: string) => {
     if (!broadcastChannelRef.current) return;
     
+    const notificationId = toastId || `${playerId}-${Date.now()}`;
+    
+    // Show toast locally for the sender
+    toast[type](message, { id: notificationId });
+    
+    // Broadcast to other players
     broadcastChannelRef.current.send({
       type: "broadcast",
       event: "room-notification",
@@ -55,6 +62,7 @@ export const useRoomPresence = (roomCode?: string) => {
         message,
         senderId: playerId,
         senderName: playerName,
+        toastId: notificationId,
       } as RoomNotification,
     });
   }, [playerId, playerName]);
@@ -97,7 +105,7 @@ export const useRoomPresence = (roomCode?: string) => {
         if (key !== playerId && newPresences && newPresences.length > 0) {
           const presence = newPresences[0] as any;
           const name = presence.name || `Player ${key.slice(0, 4)}`;
-          toast.info(`${name} joined the room`);
+          toast.info(`${name} joined the room`, { id: `join-${key}` });
         }
       })
       .on("presence", { event: "leave" }, ({ key, leftPresences }) => {
@@ -106,7 +114,7 @@ export const useRoomPresence = (roomCode?: string) => {
         if (key !== playerId && leftPresences && leftPresences.length > 0) {
           const presence = leftPresences[0] as any;
           const name = presence.name || `Player ${key.slice(0, 4)}`;
-          toast.info(`${name} left the room`);
+          toast.info(`${name} left the room`, { id: `leave-${key}` });
         }
       })
       .on("broadcast", { event: "room-notification" }, ({ payload }) => {
@@ -114,16 +122,17 @@ export const useRoomPresence = (roomCode?: string) => {
         // Show notification from other players
         if (notification.senderId !== playerId) {
           const displayMessage = `${notification.senderName}: ${notification.message}`;
+          const toastOptions = notification.toastId ? { id: `${notification.toastId}-${playerId}` } : {};
           switch (notification.type) {
             case "success":
-              toast.success(displayMessage);
+              toast.success(displayMessage, toastOptions);
               break;
             case "error":
-              toast.error(displayMessage);
+              toast.error(displayMessage, toastOptions);
               break;
             case "info":
             default:
-              toast.info(displayMessage);
+              toast.info(displayMessage, toastOptions);
               break;
           }
         }
