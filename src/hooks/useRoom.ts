@@ -221,8 +221,6 @@ export const useRoom = (roomCode?: string) => {
     
     if (updateError) {
       toast.error("Failed to reset evidence");
-    } else {
-      toast.success("Evidence reset for all players");
     }
   }, [room]);
 

@@ -38,7 +38,7 @@ const Room = () => {
     updateSelectedAbilities,
   } = useRoom(roomCode);
 
-  const { players, playerId, playerName, setPlayerName, playerCount } = useRoomPresence(roomCode);
+  const { players, playerId, playerName, setPlayerName, playerCount, broadcastNotification } = useRoomPresence(roomCode);
   useScrollRestoration({ ready: !loading });
   
   // Show name dialog if player hasn't set a custom name
@@ -243,6 +243,8 @@ const Room = () => {
 
   const handleReset = () => {
     resetEvidence();
+    broadcastNotification("success", "Reset evidence");
+    toast.success("Evidence reset");
     try {
       window.dispatchEvent(new Event("app-reset"));
     } catch (e) {}
