@@ -56,17 +56,21 @@ export const BPMTracker = ({ onBPMChange, bpmValue }: BPMTrackerProps) => {
     lastClickRef.current = now;
   };
 
-  const handleReset = () => {
+  const resetState = () => {
     setBpm(null);
     setClicks([]);
     lastClickRef.current = 0;
     onBPMChange(null);
+  };
+
+  const handleReset = () => {
+    resetState();
     toast.success("BPM tracker reset");
   };
 
-  // Listen for global app reset
+  // Listen for global app reset (no individual toast)
   useEffect(() => {
-    const handler = () => handleReset();
+    const handler = () => resetState();
     window.addEventListener("app-reset", handler as EventListener);
     return () => window.removeEventListener("app-reset", handler as EventListener);
   }, []);

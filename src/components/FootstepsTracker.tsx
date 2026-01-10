@@ -56,17 +56,21 @@ export const FootstepsTracker = ({ onSPMChange, spmValue }: FootstepsTrackerProp
     lastClickRef.current = now;
   };
 
-  const handleReset = () => {
+  const resetState = () => {
     setSpm(null);
     setClicks([]);
     lastClickRef.current = 0;
     onSPMChange(null);
+  };
+
+  const handleReset = () => {
+    resetState();
     toast.success("Footsteps tracker reset");
   };
 
-  // Listen for global app reset
+  // Listen for global app reset (no individual toast)
   useEffect(() => {
-    const handler = () => handleReset();
+    const handler = () => resetState();
     window.addEventListener("app-reset", handler as EventListener);
     return () => window.removeEventListener("app-reset", handler as EventListener);
   }, []);
